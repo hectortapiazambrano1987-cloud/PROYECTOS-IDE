@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07142b">
+  <title>ENOS 2026 IDE "SHYRIS"</title>
+  <script>
+    // Aplica el tema guardado antes de pintar la página para evitar un parpadeo.
+    try { if (localStorage.getItem("enos-theme") === "light") document.documentElement.dataset.theme = "light"; } catch (error) {}
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/data.js" defer></script>
+  <script src="js/dmgr-data.js" defer></script>
+  <script src="js/ide-data.js" defer></script>
+  <script src="js/plan-data.js" defer></script>
+  <script src="js/bomberos-data.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+  <header class="topbar">
+    <div class="brand-lockup">
+      <img class="brand-mark" src="LOGOS/00-ejercito-ecuatoriano.png" alt="Ejército Ecuatoriano">
+      <div>
+        <p class="brand-kicker">Plataforma de coordinación</p>
+        <h1>ENOS 2026 <span>IDE</span> <span>"SHYRIS"</span></h1>
+      </div>
+    </div>
+    <div class="logo-strip" aria-label="Instituciones participantes">
+      <img src="LOGOS/01-ide-shyris.png" alt="Primera División de Ejército «Shyris»" title="I-D.E. «Shyris»">
+      <img src="LOGOS/02-policia-nacional.png" alt="Policía Nacional del Ecuador" title="Policía Nacional del Ecuador">
+      <img src="LOGOS/03-alcaldia-quito.png" alt="Alcaldía Metropolitana de Quito" title="Alcaldía Metropolitana de Quito">
+      <img src="LOGOS/04-bomberos-quito.png" alt="Cuerpo de Bomberos del Distrito Metropolitano de Quito" title="Cuerpo de Bomberos de Quito">
+      <img src="LOGOS/05-amt.png" alt="Agencia Metropolitana de Tránsito" title="AMT">
+    </div>
+    <p class="event-meta">Evento 8 <span>·</span> 02/11/2028 – 01:00 <span>·</span> Distrito Metropolitano de Quito</p>
+    <nav class="primary-nav" aria-label="Secciones principales">
+      <a href="#ide" data-route="ide">IDE</a>
+      <a href="#dmgr" data-route="dmgr">DMGR</a>
+      <a href="#pn" data-route="pn">PN</a>
+      <a href="#bomberos" data-route="bomberos">BOMBEROS</a>
+      <a href="#amt" data-route="amt">AMT</a>
+      <button class="theme-toggle" type="button" aria-pressed="true"><span aria-hidden="true">☀</span><span class="theme-toggle-label">Modo claro</span></button>
+    </nav>
+  </header>
+  <main id="app-main" tabindex="-1"></main>
+</body>
+</html>
