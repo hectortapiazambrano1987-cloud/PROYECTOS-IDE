@@ -9,12 +9,14 @@
   const MAIN = document.querySelector("#app-main");
   const NAV_LINKS = [...document.querySelectorAll("[data-route]")];
   const MAPS = {
+    ide: { path: "IDE/SITUACION_3/Diapositiva_02.png", width: 2001, height: 1125, title: "11 BCB «Galápagos» · Cantones afectados", short: "IDE", dataKey: "IDE", ratio: 2001 / 1125, event: "Situación N.º 3", date: "Alerta roja", place: "Provincia de Chimborazo", subtitle: "Situación N.º 3 · Provincia de Chimborazo · eventos múltiples simultáneos", flag: "SITUACIÓN 3" },
     pn: { path: "PN/PN MAPA EVENTO 3.jpeg", width: 1536, height: 1024, title: "Policía Nacional", short: "PN", dataKey: "PN", ratio: 1.5, event: "Evento 3", date: "27/11/2028 – 03:00" },
-    amt: { path: "PN/AMT MAPA DESPLIEGUE.jpg", width: 1264, height: 843, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1264 / 843, event: "Despliegue operativo", date: "Vía E28 – Noroccidente", subtitle: "Control, seguridad y movilidad · Vía E28 y desvíos hacia el sur", flag: "VÍA E28" },
+    amt: { path: "PN/AMT MAPA DESPLIEGUE.jpg", width: 1264, height: 843, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1264 / 843, event: "Despliegue operativo", date: "Vía E28 – Noroccidente", place: "", subtitle: "Control, seguridad y movilidad · Vía E28 y desvíos hacia el sur", flag: "VÍA E28" },
     dmgr: { path: "MDMQ/MAPA MDMQ.jpeg", width: 1536, height: 1024, title: "Secretaría de Seguridad y Gestión de Riesgos", short: "DMGR", dataKey: "DMGR", ratio: 1.5 }
   };
   const ROUTES = ["ide", "dmgr", "pn", "bomberos", "amt"];
   const TABS = {
+    ide: ["Resumen", "Cantones", "Zonas de impacto", "Población", "Personal", "Medios", "Instituciones", "Puntos"],
     dmgr: ["Resumen", "Acciones", "Inundaciones", "Por AZ", "Movimientos", "Recursos", "Puntos", "Simbología"],
     pn: ["Resumen", "Personal", "Detalle por punto", "Logística", "Coordinación", "Turnos", "Puntos", "Simbología + Nota"],
     amt: ["Resumen", "Puntos de control", "Desvíos", "Cierre especial", "Logística", "Puntos", "Simbología", "Observaciones"]
@@ -24,6 +26,28 @@
     orange: "#f57c00", green: "#2e9e4f", yellow: "#f2c94c", white: "#ffffff"
   };
   // Coordenadas de los puntos indicadas sobre las dimensiones originales de cada mapa.
+  // IDE · Situación N.º 3: coordenadas en píxeles sobre "IDE/SITUACION_3/Diapositiva_02.png" (2001 × 1125).
+  // Los cantones con alerta se marcan sobre su triángulo; sectors enlaza con la primera columna de las hojas IDE.
+  const IDE_POINTS = [
+    { name: "Pallatanga", x: 407, y: 665, type: "Alerta roja", color: "red", sectors: ["Pallatanga", "ERS-11"] },
+    { name: "Cumandá", x: 266, y: 797, type: "Alerta roja", color: "red", sectors: ["Cumandá", "ERS-11"] },
+    { name: "Alausí", x: 538, y: 708, type: "Alerta naranja", color: "orange", sectors: ["Alausí", "GCB-32"] },
+    { name: "Chunchi", x: 486, y: 812, type: "Alerta naranja", color: "orange", sectors: ["Chunchi", "GCB-32"] },
+    { name: "Riobamba", x: 692, y: 437, type: "Inundaciones (sin nivel)", color: "blue", sectors: ["Riobamba", "GCB-32"] },
+    { name: "Guamote", x: 765, y: 655, type: "Sin alerta", color: "white", sectors: ["Guamote", "GCB-32"] },
+    { name: "Colta", x: 436, y: 496, type: "Sin alerta", color: "white", sectors: ["Colta"] },
+    { name: "Guano", x: 690, y: 283, type: "Sin alerta", color: "white", sectors: ["Guano"] },
+    { name: "Penipe", x: 900, y: 277, type: "Sin alerta", color: "white", sectors: ["Penipe"] },
+    { name: "Chambo", x: 885, y: 449, type: "Sin alerta", color: "white", sectors: ["Chambo"] }
+  ];
+  // Paneles clicables de la lámina 2 (x, y, ancho, alto en píxeles de la imagen).
+  const IDE_LEGENDS = [
+    { id: "riobamba", label: "Riobamba – inundaciones", box: [1160, 115, 775, 260], tab: "Población", sectors: ["Riobamba"] },
+    { id: "alausi", label: "Alausí & Chunchi – movimientos en masa", box: [1160, 430, 775, 255], tab: "Cantones", sectors: ["Alausí", "Chunchi"] },
+    { id: "pallatanga", label: "Pallatanga & Cumandá – bloqueos viales", box: [1160, 730, 775, 230], tab: "Zonas de impacto", sectors: ["Pallatanga", "Cumandá"] },
+    { id: "alertas", label: "Leyenda: alerta naranja / alerta roja", box: [895, 838, 147, 228], tab: "Cantones", related: ["Alerta roja", "Alerta naranja"] },
+    { id: "titulo", label: "Cantones afectados – Provincia de Chimborazo", box: [65, 65, 750, 140], tab: "Resumen", related: ["Alerta roja", "Alerta naranja", "Inundaciones (sin nivel)"] }
+  ];
   // PN · Evento 3: coordenadas en píxeles sobre "PN/PN MAPA EVENTO 3.jpeg" (1536 × 1024).
   // sectors: valores de la primera columna de las hojas de PN relacionados con el punto.
   const PN_POINTS = [
@@ -99,6 +123,7 @@
     { id: "recursos", label: "Recursos e instituciones desplegadas", box: [15, 828, 1511, 178], tab: "Recursos" }
   ];
   const KPI = {
+    ide: [["323", "efectivos militares"], ["707", "personas aisladas"], ["273", "familias en AT"], ["5", "cantones con alerta"]],
     dmgr: [["1.296", "personas afectadas"], ["324", "familias afectadas"], ["684", "personal servidores"], ["354", "recursos totales"]],
     pn: [["24", "servidores por turno"], ["4", "puntos de intervención"], ["5", "patrulleros"], ["4", "motocicletas"]],
     amt: [["22", "agentes"], ["4", "patrulleros"], ["11", "motorizados"], ["37", "recursos totales"]]
@@ -220,6 +245,22 @@
     const images = [section.image, section.extraImage, section.thirdImage].filter(Boolean);
     return `<p class="eyebrow">${escapeHTML(section.source)}</p>${section.html}
       <details class="ide-originals"><summary>Ver lámina${images.length > 1 ? "s" : ""} original${images.length > 1 ? "es" : ""}</summary><div class="ide-original-grid">${images.map(src => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="Lámina original: ${escapeHTML(section.label)}" loading="lazy"></a>`).join("")}</div></details>`;
+  }
+
+  // Pestaña IDE · Situación N.º 3: secciones con la información de cada lámina, debajo del mapa.
+  function renderIdeInfo() {
+    if (!IDE.SECTIONS.some(section => section.id === state.ideSection)) state.ideSection = IDE.SECTIONS[0].id;
+    return `<section class="page-shell ide-page"><div class="section-heading"><h2>Situación N.º 3 · 11 BCB «Galápagos»</h2><p>Fuente: SITUACION_3.pptx · IDE/SITUACION_3/SITUACION_3_Datos.xlsx</p></div>
+      <nav class="data-tabs ide-tabs" aria-label="Información de la situación">${IDE.SECTIONS.map(section => `<button class="ide-tab-button data-tab ${state.ideSection === section.id ? "active" : ""}" type="button" data-ide-section="${section.id}">${escapeHTML(section.label)}</button>`).join("")}</nav>
+      <section class="ide-section">${renderIdeSection(state.ideSection)}</section></section>`;
+  }
+
+  function bindIdeInfo() {
+    MAIN.querySelectorAll("[data-ide-section]").forEach(button => button.addEventListener("click", () => {
+      state.ideSection = button.dataset.ideSection;
+      MAIN.querySelectorAll("[data-ide-section]").forEach(tab => tab.classList.toggle("active", tab === button));
+      MAIN.querySelector(".ide-section").innerHTML = renderIdeSection(state.ideSection);
+    }));
   }
 
   function bindHome() {
@@ -400,7 +441,30 @@
     MAIN.querySelector(".map-viewport").addEventListener("pointerdown", event => { if (!event.target.closest(".bomb-hotspot")) hide(); });
   }
 
-  function legendSet(route) { return { dmgr: DMGR_LEGENDS, pn: PN_LEGENDS, amt: AMT_LEGENDS }[route] || []; }
+  function legendSet(route) { return { dmgr: DMGR_LEGENDS, pn: PN_LEGENDS, amt: AMT_LEGENDS, ide: IDE_LEGENDS }[route] || []; }
+
+  // Detalle de un cantón de la Situación N.º 3 a partir de las hojas IDE.
+  function ideCantonBody(name) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    const canton = sheetRows("IDE", "Cantones afectados").rows.find(row => row[0] === name);
+    const unit = sheetRows("IDE", "Personal militar").rows.find(row => String(row[2] || "").includes(name));
+    const zones = sheetRows("IDE", "Zonas de impacto").rows.filter(row => row[0] === name);
+    const people = sheetRows("IDE", "Población aislada").rows.filter(row => row[0] === name);
+    let html = canton ? meta("Evento", canton[1]) + meta("Alerta", canton[2]) + `<p class="detail-meta">${escapeHTML(canton[4])}</p>` : '<p class="detail-meta">Sin alerta registrada en la lámina.</p>';
+    if (unit) html += meta("Unidad responsable", `${unit[0]} (${unit[1]} efectivos)`);
+    if (zones.length) html += `<p class="detail-label bomb-tip-sub">Zonas de impacto</p><ul class="detail-list">${zones.map(row => `<li>${escapeHTML(row[1])}: ${escapeHTML(row[2])} · ${escapeHTML(row[3])} · prioridad ${escapeHTML(row[4])}</li>`).join("")}</ul>`;
+    if (people.length) html += `<p class="detail-label bomb-tip-sub">Población aislada</p><ul class="detail-list">${people.map(row => `<li>${escapeHTML(row[1])}: ${escapeHTML(row[2])} familias · ${escapeHTML(row[3])} personas</li>`).join("")}</ul>`;
+    return html;
+  }
+
+  function renderIdeLegendDetail(legend) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    let body = "";
+    if (legend.sectors) body = legend.sectors.map(name => `<p class="detail-label bomb-tip-sub">${escapeHTML(name)}</p>${ideCantonBody(name)}`).join("");
+    else if (legend.id === "alertas") body = sheetRows("IDE", "Cantones afectados").rows.map(row => meta(row[0], `${row[2]} · ${row[1]}`)).join("") + '<p class="detail-meta">Nivel interpretado por el color de cada recuadro de la lámina.</p>';
+    else body = sheetRows("IDE", "Datos generales").rows.slice(1, 7).map(row => meta(row[0], row[1])).join("");
+    return `<h3 class="detail-name">${escapeHTML(legend.label)}</h3>${body}<p class="detail-meta detail-hint">Información ampliada en la pestaña «${escapeHTML(legend.tab)}».</p>`;
+  }
 
   // Detalle de un punto AMT a partir de las hojas, enlazado por su primera columna.
   function amtPointBody(key) {
@@ -445,6 +509,7 @@
 
   function renderMapLegendDetail(id) {
     if (state.route === "pn") return renderPnLegendDetail(PN_LEGENDS.find(item => item.id === id));
+    if (state.route === "ide") return renderIdeLegendDetail(IDE_LEGENDS.find(item => item.id === id));
     if (state.route === "amt") return renderAmtLegendDetail(AMT_LEGENDS.find(item => item.id === id));
     const legend = DMGR_LEGENDS.find(item => item.id === id);
     const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
@@ -477,6 +542,10 @@
       const rows = sheetRows("DMGR", "Movimientos en masa").rows.filter(item => point.rows.includes(Number(item[0])));
       return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Movimiento en masa</p>${rows.map(row => `<p class="detail-meta"><strong>N.º ${escapeHTML(row[0])} · ${escapeHTML(row[1])}:</strong> AZ ${escapeHTML(row[2])} · situación: ${escapeHTML(row[3])}</p>`).join("")}`;
     }
+    if (unit === "IDE") {
+      const coords = sheetRows("IDE", "Puntos del mapa").rows.find(row => row[0] === point.name);
+      return `<h3 class="detail-name">${escapeHTML(point.name)}</h3>${ideCantonBody(point.name)}${coords ? `<p class="detail-meta"><strong>Coordenadas aprox.:</strong> ${escapeHTML(coords[2])}</p>` : ""}`;
+    }
     if (unit === "PN") {
       const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
       const coords = sheetRows("PN", "Puntos del mapa").rows.find(row => row[0] === point.name);
@@ -498,6 +567,17 @@
   }
 
   function renderSubtab(unit, tab) {
+    if (unit === "IDE") {
+      const link = { kind: "pn-sectors" };
+      if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("IDE", "Datos generales")}`;
+      if (tab === "Cantones") return `<h3>Cantones afectados · seleccione una fila</h3>${renderTable("IDE", "Cantones afectados", link)}<p class="table-note">Nivel de alerta interpretado por el color de cada recuadro de la lámina 2.</p>`;
+      if (tab === "Zonas de impacto") return `<h3>Zonas de impacto · seleccione una fila</h3>${renderTable("IDE", "Zonas de impacto", link)}<p class="table-note">Los sectores del eje E35 no están señalados en el mapa.</p>`;
+      if (tab === "Población") return `<h3>Población aislada · seleccione una fila</h3>${renderTable("IDE", "Población aislada", link)}`;
+      if (tab === "Personal") return `<h3>Personal militar · seleccione una unidad</h3>${renderTable("IDE", "Personal militar", link)}<p class="table-note">Al seleccionar GCB-32 o ERS-11 se resaltan sus cantones de responsabilidad.</p>`;
+      if (tab === "Medios") return `<h3>Medios empleados</h3>${renderTable("IDE", "Medios")}<p class="table-note">MIT y GADs suman 32 equipos pesados en los corredores E487 y E35.</p>`;
+      if (tab === "Instituciones") return `<h3>Instituciones empleadas</h3>${renderTable("IDE", "Instituciones")}`;
+      return `${renderPointList("IDE")}<h3>Coordenadas de referencia</h3>${renderTable("IDE", "Puntos del mapa", link)}<p class="table-note">Coordenadas aproximadas de las cabeceras cantonales.</p>`;
+    }
     if (unit === "DMGR") {
       if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("DMGR", "Datos generales")}`;
       if (tab === "Acciones") return `<h3>Acciones principales</h3>${renderTable("DMGR", "Acciones principales")}`;
@@ -528,7 +608,7 @@
     return `<h3>Observaciones de la lámina</h3>${renderTable("AMT", "Observaciones")}`;
   }
 
-  function pointSet(unit) { return { PN: PN_POINTS, AMT: AMT_POINTS, DMGR: DMGR_POINTS }[unit]; }
+  function pointSet(unit) { return { PN: PN_POINTS, AMT: AMT_POINTS, DMGR: DMGR_POINTS, IDE: IDE_POINTS }[unit]; }
 
   function renderPointList(unit) {
     return `<input class="search-input" type="search" placeholder="Buscar punto…" aria-label="Buscar punto" value="${escapeHTML(state.search)}"><div class="point-list">${pointSet(unit).map((point, index) => `<button class="point-list-item" type="button" data-point-index="${index}" data-point-unit="${unit}"><span class="point-dot" style="--point-color:${COLORS[point.color]}"></span><span>${escapeHTML(point.name)}</span></button>`).join("")}</div>`;
@@ -578,7 +658,8 @@
   const DEFAULT_EVENT_META = EVENT_META.innerHTML;
   function updateEventMeta(route) {
     const map = MAPS[route];
-    EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)}${route === "amt" ? "" : " <span>·</span> Distrito Metropolitano de Quito"}` : DEFAULT_EVENT_META;
+    const place = map?.place ?? "Distrito Metropolitano de Quito";
+    EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)}${place ? ` <span>·</span> ${escapeHTML(place)}` : ""}` : DEFAULT_EVENT_META;
   }
 
   function render() {
@@ -587,7 +668,7 @@
     updateNav(state.route);
     updateEventMeta(state.route);
     document.title = `ENOS 2026 IDE "SHYRIS" · ${state.route.toUpperCase()}`;
-    if (state.route === "ide") { MAIN.innerHTML = renderHome(); bindHome(); }
+    if (state.route === "ide") { MAIN.innerHTML = renderMap("ide") + renderIdeInfo(); bindMap("ide"); bindIdeInfo(); }
     else if (MAPS[state.route]) { MAIN.innerHTML = renderMap(state.route); bindMap(state.route); }
     else { MAIN.innerHTML = renderBomberos(); bindBomberos(); }
   }
@@ -638,7 +719,7 @@
       MAIN.querySelector(".map-layout").classList.toggle("circles-off", !state.circles);
       MAIN.querySelector(".circles-toggle").setAttribute("aria-pressed", String(state.circles));
     });
-    MAIN.querySelectorAll(".data-tab").forEach(button => button.addEventListener("click", () => {
+    MAIN.querySelectorAll("[data-subtab]").forEach(button => button.addEventListener("click", () => {
       state.subtab[route] = button.dataset.subtab;
       state.search = "";
       refreshMap();

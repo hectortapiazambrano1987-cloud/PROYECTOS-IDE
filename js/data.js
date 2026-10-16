@@ -1,5 +1,102 @@
-// Datos transcritos directamente de las hojas Excel de PN (Evento 3) y AMT (despliegue vía E28).
+// Datos transcritos de las hojas Excel de IDE (Situación N.º 3), PN (Evento 3) y AMT (despliegue vía E28).
 window.ENOS_DATA = {
+  "IDE": {
+    // Situación N.º 3 · fuente: IDE/SITUACION_3/SITUACION_3_Datos.xlsx.
+    // La primera columna de las hojas enlazadas coincide con el campo sectors de IDE_POINTS (cantón o unidad).
+    "sheets": {
+      "Datos generales": [
+        ["SITUACIÓN N.º 3 – 11 BCB «GALÁPAGOS»", null], [null, null],
+        ["Campo", "Detalle"],
+        ["Unidad", "11 BCB «Galápagos»"],
+        ["Situación", "Eventos múltiples simultáneos – Provincia de Chimborazo"],
+        ["Nivel de alerta", "ALERTA ROJA (capacidad civil sobrepasada)"],
+        ["Precipitaciones", "96 horas continuas; saturación crítica de suelos"],
+        ["Población aislada", "707 personas (273 familias) en Pungalá, Punín y Licán"],
+        ["Corredores afectados", "E487 y E35: ruptura total de conectividad vial en el centro del país"],
+        ["Cantones con alerta", "Riobamba, Alausí, Chunchi, Pallatanga y Cumandá"],
+        ["Efectivos militares", "323"],
+        ["Fases de respuesta", "1. Evaluación EVIN/EDAN · 2. Búsqueda y rescate · 3. Evacuación segura · 4. Asistencia logística · 5. Habilitación vial"]
+      ],
+      "Cantones afectados": [
+        ["CANTONES AFECTADOS", null, null, null, null], [null, null, null, null, null],
+        ["Cantón", "Evento", "Alerta", "Unidad", "Descripción"],
+        ["Riobamba", "Inundaciones", "Sin nivel indicado", "GCB-32", "Inundaciones severas en parroquias rurales (Pungalá, Punín, Licán). Aislamiento poblacional y afectación agrícola crítica en Licto."],
+        ["Alausí", "Movimientos en masa", "Alerta naranja", "GCB-32", "Movimientos en masa, grietas activas y flujos de lodo. Aislamiento inminente en Siltur y pérdida de caminos vecinales en La Armenia-Huataxí."],
+        ["Chunchi", "Movimientos en masa", "Alerta naranja", "GCB-32", "Movimientos en masa, grietas activas y flujos de lodo. Aislamiento inminente en Siltur y pérdida de caminos vecinales en La Armenia-Huataxí."],
+        ["Pallatanga", "Bloqueos viales", "Alerta roja", "ERS-11", "Bloqueos totales por deslizamientos masivos y socavamientos. Pérdida de mesa vial; vehículos pesados y buses retenidos."],
+        ["Cumandá", "Bloqueos viales", "Alerta roja", "ERS-11", "Bloqueos totales por deslizamientos masivos y socavamientos. Pérdida de mesa vial; vehículos pesados y buses retenidos."]
+      ],
+      "Zonas de impacto": [
+        ["ZONAS DE IMPACTO Y TIPOLOGÍAS DE RIESGO", null, null, null, null, null], [null, null, null, null, null, null],
+        ["Cantón / eje", "Sector", "Tipología", "Estado actual", "Prioridad", "Acción táctica"],
+        ["Cumandá", "Cruz del Hueso", "Deslizamiento de talud", "Bloqueo total", "ALTA", "Paso provisional"],
+        ["Pallatanga", "Panza Redonda", "Pérdida de mesa vial", "Aislamiento", "ALTA", "Búsqueda y rescate"],
+        ["Riobamba", "Puninhuayco", "Aluvión", "Vía interrumpida", "ALTA", "Recuperación rural"],
+        ["E35", "Casual – La Esperanza", "Hundimiento / grietas", "Restricción total", "MEDIA", "Estudio geotécnico"],
+        ["E35", "Chitaquiz", "Flujo de lodo", "Tránsito restringido", "MEDIA", "Limpieza de calzada"]
+      ],
+      "Población aislada": [
+        ["POBLACIÓN AISLADA / ALOJAMIENTOS TEMPORALES", null, null, null], [null, null, null, null],
+        ["Cantón", "Parroquia", "Familias", "Personas"],
+        ["Riobamba", "Pungalá", 150, 380],
+        ["Riobamba", "Punín", 87, 213],
+        ["Riobamba", "Licán", 36, 114],
+        ["TOTAL", null, 273, 707]
+      ],
+      "Personal militar": [
+        ["PERSONAL MILITAR EMPLEADO", null, null], [null, null, null],
+        ["Unidad", "Efectivos", "Eje de responsabilidad"],
+        ["Puesto de Mando 11BCB", 15, "Mando y control"],
+        ["Oficiales de enlace", 8, "Enlace con COE e instituciones"],
+        ["GCB-32", 140, "Riobamba, Guamote, Alausí, Chunchi"],
+        ["ERS-11", 80, "Pallatanga, Cumandá"],
+        ["Fuerza de Reacción", 80, "Contingencias inmediatas"],
+        ["TOTAL", 323, null]
+      ],
+      "Medios": [
+        ["MEDIOS DE LAS INSTITUCIONES EMPLEADOS", null, null, null], [null, null, null, null],
+        ["Grupo", "Institución", "Medio", "Cantidad"],
+        ["11 BCB", "11 BCB", "Camiones tácticos HOWO 4x4 / 6x6", 4],
+        ["11 BCB", "11 BCB", "Camiones 3.5 t (transporte logístico)", 2],
+        ["Civil", "MIT", "Máquinas pesadas (retroexcavadoras, volquetas)", 7],
+        ["Civil", "GADs", "Vehículos operativos en la red vial", 25],
+        ["Civil", "GAD Riobamba", "Vacuum (hidrosuccionador) para hospitales", 1],
+        ["Civil", "Salud / Bomberos", "Vehículos de rescate", 4],
+        ["Civil", "Salud / Bomberos", "Ambulancias", 2],
+        ["TOTAL", null, null, 45]
+      ],
+      "Instituciones": [
+        ["INSTITUCIONES EMPLEADAS", null, null], [null, null, null],
+        ["Institución", "Rol", "Personal"],
+        ["Puesto de Mando 11BCB", "Centro de coordinación", "8 oficiales de enlace"],
+        ["COE Provincial Chimborazo", "Coordinación provincial", null],
+        ["6 COEs cantonales", "Coordinación cantonal", null],
+        ["ECU 911", "Canaliza llamadas masivas", null],
+        ["PMU", "Puesto de mando unificado", null],
+        ["Policía Nacional", "Control vial y cierres intercantonales (E487 y E35)", "60 efectivos"],
+        ["Bomberos", "Búsqueda y rescate", "30 efectivos"],
+        ["SNGR", "Fichas EVIN/EDAN en 8 zonas críticas", "10 técnicos"],
+        ["MIT / GADs", "Maquinaria pesada", "32 equipos"],
+        ["MDH / MIES", "Kits de ayuda y censo en AT", null],
+        ["MAGAP", "Insumos agropecuarios (Licto y parroquias rurales)", null],
+        ["MSP / Cruz Roja", "Atención médica y red de salud", "20 profesionales"]
+      ],
+      "Puntos del mapa": [
+        ["CANTONES EN EL MAPA", null, null], [null, null, null],
+        ["Cantón", "Símbolo", "Coordenadas aprox. (lat, lon)"],
+        ["Riobamba", "Triángulo de alerta", "-1.6636, -78.6546"],
+        ["Alausí", "Triángulo de alerta", "-2.2027, -78.8469"],
+        ["Chunchi", "Triángulo de alerta", "-2.2853, -78.9205"],
+        ["Pallatanga", "Triángulo de alerta", "-1.9997, -78.9585"],
+        ["Cumandá", "Triángulo de alerta", "-2.2091, -79.1366"],
+        ["Guamote", "Sin alerta", "-1.9330, -78.7106"],
+        ["Colta", "Sin alerta", "-1.7165, -78.7623"],
+        ["Guano", "Sin alerta", "-1.6058, -78.6305"],
+        ["Penipe", "Sin alerta", "-1.5675, -78.5285"],
+        ["Chambo", "Sin alerta", "-1.7311, -78.5940"]
+      ]
+    }
+  },
   "PN": {
     // Evento 3 · fuente: PN/Despliegue_Evento3_Zona9_DMQ.xlsx (lámina TERCERA SITUACIÓN).
     "sheets": {
