@@ -10,14 +10,14 @@
   const NAV_LINKS = [...document.querySelectorAll("[data-route]")];
   const MAPS = {
     pn: { path: "PN/PN MAPA EVENTO 3.jpeg", width: 1536, height: 1024, title: "Policía Nacional", short: "PN", dataKey: "PN", ratio: 1.5, event: "Evento 3", date: "27/11/2028 – 03:00" },
-    amt: { path: "PN/AMT MAPA MEJORADO.png", width: 1672, height: 941, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1672 / 941 },
+    amt: { path: "PN/AMT MAPA DESPLIEGUE.jpg", width: 1264, height: 843, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1264 / 843, event: "Despliegue operativo", date: "Vía E28 – Noroccidente", subtitle: "Control, seguridad y movilidad · Vía E28 y desvíos hacia el sur", flag: "VÍA E28" },
     dmgr: { path: "MDMQ/MAPA MDMQ.jpeg", width: 1536, height: 1024, title: "Secretaría de Seguridad y Gestión de Riesgos", short: "DMGR", dataKey: "DMGR", ratio: 1.5 }
   };
   const ROUTES = ["ide", "dmgr", "pn", "bomberos", "amt"];
   const TABS = {
     dmgr: ["Resumen", "Acciones", "Inundaciones", "Por AZ", "Movimientos", "Recursos", "Puntos", "Simbología"],
     pn: ["Resumen", "Personal", "Detalle por punto", "Logística", "Coordinación", "Turnos", "Puntos", "Simbología + Nota"],
-    amt: ["Resumen", "Recursos", "Distribución", "Actividades", "Puntos", "Simbología"]
+    amt: ["Resumen", "Puntos de control", "Desvíos", "Cierre especial", "Logística", "Puntos", "Simbología", "Observaciones"]
   };
   const COLORS = {
     red: "#e53935", amber: "#f5a623", purple: "#8e44ad", blue: "#1e88e5",
@@ -51,27 +51,32 @@
     { id: "resumen", label: "Resumen total Zona 9 DMQ", box: [1140, 762, 390, 225], tab: "Resumen" },
     { id: "via", label: "Vía E28 con afectación / cierre", box: [700, 360, 190, 90], tab: "Puntos", related: ["Incidente", "Referencia vía E28", "Control de tránsito"] }
   ];
+  // AMT · coordenadas en píxeles sobre "PN/AMT MAPA DESPLIEGUE.jpg" (1264 × 843).
+  // sectors: valores de la primera columna de las hojas AMT relacionados con el punto.
   const AMT_POINTS = [
-    { name: "Vía Quito–Cayambe (peaje)", x: 944, y: 193, color: "yellow", rows: [15] },
-    { name: "Pomasquí", x: 958, y: 238, color: "blue", rows: [10] },
-    { name: "Calderón (La Capilla)", x: 966, y: 282, color: "purple", rows: [12] },
-    { name: "La Bota", x: 981, y: 320, color: "blue", rows: [12] },
-    { name: "Cotocollao", x: 835, y: 305, color: "red", rows: [4] },
-    { name: "Atucucho, La Comuna, San Juan", x: 683, y: 333, color: "blue", rows: [13] },
-    { name: "Comité del Pueblo", x: 836, y: 355, color: "red", rows: [2] },
-    { name: "Concepción", x: 862, y: 394, color: "red", rows: [3] },
-    { name: "Monjas (Cuscungo / El Madrigal)", x: 604, y: 437, color: "orange", rows: [10, 14] },
-    { name: "DMQ (Centro Histórico)", x: 808, y: 430, color: "white", rows: [1] },
-    { name: "Av. Carlos Fortines (Prolongación Simón Bolívar)", x: 917, y: 458, color: "yellow", rows: [11] },
-    { name: "El Madrigal", x: 650, y: 476, color: "orange", rows: [14] },
-    { name: "Puengasí", x: 828, y: 489, color: "purple", rows: [5] },
-    { name: "La Argelia", x: 727, y: 510, color: "red", rows: [7] },
-    { name: "Parque Cuscungo", x: 927, y: 515, color: "blue", rows: [14] },
-    { name: "La Ecuatoriana", x: 864, y: 543, color: "green", rows: [8] },
-    { name: "Guamaní", x: 724, y: 566, color: "green", rows: [6] },
-    { name: "La Ferroviaria", x: 759, y: 581, color: "red", rows: [9] },
-    { name: "La Capilla (Calderón) y La Bota", x: 695, y: 625, color: "purple", rows: [12] },
-    { name: "Autopista General Rumiñahui", x: 942, y: 668, color: "yellow", rows: [14] }
+    { name: "Punto de control 1 · Nanegalito", x: 550, y: 262, type: "Punto de control", color: "blue", sectors: ["Punto de control 1"] },
+    { name: "Punto de control 2 · Km 78 Tulipe / Gualea", x: 500, y: 365, type: "Punto de control", color: "blue", sectors: ["Punto de control 2"] },
+    { name: "Punto de control 3 · Pacto – Mashpi", x: 611, y: 152, type: "Punto de control", color: "blue", sectors: ["Punto de control 3"] },
+    { name: "1.er filtro · Redondel del Condado", x: 573, y: 541, type: "Filtro de desvío", color: "green", sectors: ["1.er filtro"] },
+    { name: "2.º filtro · Intercambiador Portal Shopping", x: 568, y: 488, type: "Filtro de desvío", color: "green", sectors: ["2.º filtro"] },
+    { name: "3.er filtro · Redondel de San Antonio de Pichincha", x: 540, y: 434, type: "Filtro de desvío", color: "green", sectors: ["3.er filtro"] },
+    { name: "Cierre especial · Y de Cusubamba", x: 736, y: 490, type: "Cierre especial", color: "orange", sectors: ["Cierre especial"] },
+    { name: "Deslizamiento · Tulipe / Gualea", x: 742, y: 364, type: "Deslizamiento", color: "red", sectors: ["Deslizamiento"], incident: true },
+    { name: "Mashpi", x: 580, y: 230, type: "Referencia", color: "white", sectors: [], reference: "Localidad sobre el eje central Pacto – Mashpi (Punto de control 3)." },
+    { name: "Quito", x: 402, y: 587, type: "Referencia", color: "white", sectors: [], reference: "Origen de los desvíos hacia el sur." },
+    { name: "Alóag – Santo Domingo", x: 590, y: 592, type: "Referencia", color: "white", sectors: [], reference: "Vía de destino de los desvíos de transporte pesado." }
+  ];
+  // Paneles clicables de la lámina AMT (x, y, ancho, alto en píxeles de la imagen).
+  const AMT_LEGENDS = [
+    { id: "pc1", label: "Punto de control 1 – Nanegalito, Vía E28", box: [8, 95, 370, 298], tab: "Puntos de control", sectors: ["Punto de control 1"] },
+    { id: "desvios", label: "Desvíos hacia el sur (Vía Alóag – Santo Domingo)", box: [8, 398, 370, 252], tab: "Desvíos", related: ["Filtro de desvío"] },
+    { id: "mision", label: "Nuestra misión", box: [8, 655, 370, 75], tab: "Resumen" },
+    { id: "resumen", label: "Resumen de logística y personal", box: [8, 733, 566, 72], tab: "Logística", related: ["Punto de control", "Filtro de desvío"] },
+    { id: "total", label: "Total logística y personal", box: [580, 733, 392, 72], tab: "Logística", related: ["Punto de control", "Filtro de desvío"] },
+    { id: "pc2", label: "Punto de control 2 – Desvío Km 78, Tulipe / Gualea", box: [843, 95, 413, 245], tab: "Puntos de control", sectors: ["Punto de control 2", "Deslizamiento"] },
+    { id: "pc3", label: "Punto de control 3 – Eje central Pacto – Mashpi", box: [843, 345, 413, 220], tab: "Puntos de control", sectors: ["Punto de control 3"] },
+    { id: "cierre", label: "Cierre especial – Vía Cusubamba", box: [843, 570, 413, 155], tab: "Cierre especial", related: ["Cierre especial"] },
+    { id: "simbologia", label: "Simbología", box: [385, 618, 452, 112], tab: "Simbología" }
   ];
   // floodRow: N.º de la hoja "Inundaciones en barrios"; rows: N.º de la hoja "Movimientos en masa".
   const DMGR_POINTS = [
@@ -96,7 +101,7 @@
   const KPI = {
     dmgr: [["1.296", "personas afectadas"], ["324", "familias afectadas"], ["684", "personal servidores"], ["354", "recursos totales"]],
     pn: [["24", "servidores por turno"], ["4", "puntos de intervención"], ["5", "patrulleros"], ["4", "motocicletas"]],
-    amt: [["1.333", "agentes totales"], ["187", "motos · aprox."], ["47", "patrulleros · aprox."], ["15", "puntos de emergencia"]]
+    amt: [["22", "agentes"], ["4", "patrulleros"], ["11", "motorizados"], ["37", "recursos totales"]]
   };
   const state = { route: "ide", subtab: {}, filters: {}, circles: true, zoom: 1, panX: 0, panY: 0, selectedPoint: null, relatedPoints: [], search: "", mapLegend: null, bombView: null, ideSection: "situacion", planHover: null, planPin: null, planOpen: false, planTab: "totales", planSort: null, planSearch: "", planExpanded: null };
 
@@ -395,7 +400,34 @@
     MAIN.querySelector(".map-viewport").addEventListener("pointerdown", event => { if (!event.target.closest(".bomb-hotspot")) hide(); });
   }
 
-  function legendSet(route) { return { dmgr: DMGR_LEGENDS, pn: PN_LEGENDS }[route] || []; }
+  function legendSet(route) { return { dmgr: DMGR_LEGENDS, pn: PN_LEGENDS, amt: AMT_LEGENDS }[route] || []; }
+
+  // Detalle de un punto AMT a partir de las hojas, enlazado por su primera columna.
+  function amtPointBody(key) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    const control = sheetRows("AMT", "Puntos de control").rows.find(row => row[0] === key);
+    if (control) {
+      const tasks = sheetRows("AMT", "Funciones").rows.filter(row => row[0] === key);
+      return meta("Ubicación", control[1]) + meta("Agentes", control[2]) + meta("Patrulleros", control[3]) + meta("Motos", control[4]) + meta("Total recursos", control[5]) + `<ul class="detail-list">${tasks.map(row => `<li>${escapeHTML(row[1])}</li>`).join("")}</ul>`;
+    }
+    const filter = sheetRows("AMT", "Desvíos hacia el sur").rows.find(row => row[0] === key);
+    if (filter) return meta("Ubicación", filter[1]) + meta("Agentes", filter[2]) + meta("Motorizados", filter[3]) + '<p class="detail-meta">Controlan el flujo vehicular hacia la vía Alóag – Santo Domingo.</p>';
+    if (key === "Cierre especial") return `<ul class="detail-list">${sheetRows("AMT", "Cierre especial").rows.map(row => `<li>${escapeHTML(row[1])}</li>`).join("")}</ul><p class="detail-meta">La lámina no indica recursos asignados a este cierre.</p>`;
+    if (key === "Deslizamiento") return meta("Sector", "Tulipe / Gualea") + meta("Punto de control a cargo", "Punto de control 2 · Desvío Km 78") + '<p class="detail-meta">El perímetro del deslizamiento lo controlan 4 agentes y 4 motos.</p>';
+    return "";
+  }
+
+  function renderAmtLegendDetail(legend) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    let body = "";
+    if (legend.sectors) body = legend.sectors.map(key => (legend.sectors.length > 1 ? `<p class="detail-label bomb-tip-sub">${escapeHTML(key)}</p>` : "") + amtPointBody(key)).join("");
+    else if (legend.id === "desvios") body = sheetRows("AMT", "Desvíos hacia el sur").rows.map(row => meta(row[0] === "TOTAL" ? "Total" : `${row[0]} · ${row[1]}`, `${row[2]} agentes · ${row[3]} motorizado${row[3] > 1 ? "s" : ""}`)).join("");
+    else if (legend.id === "resumen" || legend.id === "total") body = sheetRows("AMT", "Resumen logística").rows.map(row => meta(row[0], `${row[3]} (control ${row[1]} + desvíos ${row[2]})`)).join("");
+    else if (legend.id === "cierre") body = amtPointBody("Cierre especial");
+    else if (legend.id === "mision") body = sheetRows("AMT", "Datos generales").rows.filter(row => ["Nuestra misión", "Lema", "Mensaje"].includes(row[0])).map(row => meta(row[0], row[1])).join("");
+    else body = sheetRows("AMT", "Simbología").rows.map(row => meta(row[0], row[1])).join("");
+    return `<h3 class="detail-name">${escapeHTML(legend.label)}</h3>${body}<p class="detail-meta detail-hint">Información ampliada en la pestaña «${escapeHTML(legend.tab)}».</p>`;
+  }
 
   function renderPnLegendDetail(legend) {
     const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
@@ -413,6 +445,7 @@
 
   function renderMapLegendDetail(id) {
     if (state.route === "pn") return renderPnLegendDetail(PN_LEGENDS.find(item => item.id === id));
+    if (state.route === "amt") return renderAmtLegendDetail(AMT_LEGENDS.find(item => item.id === id));
     const legend = DMGR_LEGENDS.find(item => item.id === id);
     const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
     let body = "";
@@ -434,8 +467,8 @@
   }
 
   function renderDetail(unit, point) {
-    if (!point && (unit === "DMGR" || unit === "PN") && state.mapLegend) return renderMapLegendDetail(state.mapLegend);
-    if (!point) return `<p class="detail-empty">${unit === "DMGR" || unit === "PN" ? "Haz clic en la simbología, en los paneles del mapa o en un punto para consultar su información." : "Haz clic en un punto del mapa para consultar su información operativa."}</p>`;
+    if (!point && state.mapLegend) return renderMapLegendDetail(state.mapLegend);
+    if (!point) return `<p class="detail-empty">Haz clic en la simbología, en los paneles del mapa o en un punto para consultar su información.</p>`;
     if (unit === "DMGR") {
       if (point.floodRow) {
         const row = sheetRows("DMGR", "Inundaciones en barrios").rows.find(item => Number(item[0]) === point.floodRow);
@@ -457,10 +490,11 @@
       const resources = sheetRows("PN", "Detalle por punto").rows.filter(row => row[0] === point.name);
       return `${head}${meta("Tarea", staff[1])}${meta("Total servidores", staff[2])}${where}<p class="detail-label bomb-tip-sub">Recursos policiales</p><ul class="detail-list">${resources.map(row => `<li>${escapeHTML(row[2])} · ${escapeHTML(row[1])}</li>`).join("")}</ul>${point.name === "Redondel Mitad del Mundo" ? '<p class="detail-meta">La lámina indica 2 servidores en total: el mismo personal de tránsito opera el patrullero.</p>' : ""}`;
     }
-    const distribution = sheetRows("AMT", "Distribución por punto").rows;
-    const related = distribution.filter(row => point.rows.includes(Number(row[0])));
-    const details = related.map(row => `<p class="detail-meta"><strong>N.º ${escapeHTML(row[0])} · ${escapeHTML(row[1])}:</strong> ${escapeHTML(row[2])} ACTS · ${escapeHTML(row[3])} motos · ${escapeHTML(row[4])} patrulleros</p>`).join("");
-    return `<h3 class="detail-name">${escapeHTML(point.name)}</h3>${details || '<p class="detail-meta">Sin fila de distribución relacionada.</p>'}`;
+    // AMT
+    const head = `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> ${escapeHTML(point.type)}</p>`;
+    if (point.reference) return `${head}<p class="detail-meta">${escapeHTML(point.reference)}</p>`;
+    const coords = sheetRows("AMT", "Puntos del mapa").rows.find(row => row[0] === point.sectors[0]);
+    return `${head}${amtPointBody(point.sectors[0])}${coords ? `<p class="detail-meta"><strong>Coordenadas aprox.:</strong> ${escapeHTML(coords[2])}</p>` : ""}`;
   }
 
   function renderSubtab(unit, tab) {
@@ -484,12 +518,14 @@
       if (tab === "Puntos") return `${renderPointList("PN")}<h3>Coordenadas de referencia</h3>${renderTable("PN", "Puntos del mapa", { kind: "pn-sectors" })}<p class="table-note">Coordenadas aproximadas para un mapa georreferenciado; verificar antes de usar en campo.</p>`;
       return `<h3>Simbología y nota operativa</h3>${renderTable("PN", "Simbología y nota")}`;
     }
-    if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("AMT", "Datos generales")}<h3>Recursos totales</h3>${renderTable("AMT", "Recursos totales")}`;
-    if (tab === "Recursos") return `<h3>Recursos totales</h3>${renderTable("AMT", "Recursos totales")}`;
-    if (tab === "Distribución") return `<h3>Recursos por punto de emergencia · seleccione una fila</h3>${renderTable("AMT", "Distribución por punto", { kind: "amt-distribution" })}<p class="table-note">Las filas de puntos están vinculadas a uno o varios marcadores.</p>`;
-    if (tab === "Actividades") return `<h3>Actividades específicas AMT</h3>${renderTable("AMT", "Actividades AMT")}`;
-    if (tab === "Puntos") return renderPointList("AMT");
-    return `<h3>Simbología del mapa</h3>${renderTable("AMT", "Simbología")}<p class="table-note">Solo están definidos los colores rojo (Inundación), amarillo (Deslizamiento / Colapso) y morado (Control vial). Los marcadores azul, naranja y verde no tienen significado en el mapa.</p>`;
+    if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("AMT", "Datos generales")}<h3>Resumen de logística y personal</h3>${renderTable("AMT", "Resumen logística")}`;
+    if (tab === "Puntos de control") return `<h3>Puntos de control · seleccione una fila</h3>${renderTable("AMT", "Puntos de control", { kind: "pn-sectors" })}<h3>Funciones y acciones</h3>${renderTable("AMT", "Funciones", { kind: "pn-sectors" })}`;
+    if (tab === "Desvíos") return `<h3>Desvíos hacia el sur · seleccione una fila</h3>${renderTable("AMT", "Desvíos hacia el sur", { kind: "pn-sectors" })}<p class="table-note">En estos desvíos se controla el flujo vehicular hacia la vía Alóag – Santo Domingo.</p>`;
+    if (tab === "Cierre especial") return `<h3>Cierre especial – vía Cusubamba</h3>${renderTable("AMT", "Cierre especial", { kind: "pn-sectors" })}`;
+    if (tab === "Logística") return `<h3>Resumen de logística y personal</h3>${renderTable("AMT", "Resumen logística")}<p class="table-note">22 agentes (16 de control + 6 de desvíos) · 4 patrulleros (2 en el punto 1 + 2 en el punto 3) · 11 motorizados (8 de control + 3 de desvíos).</p>`;
+    if (tab === "Puntos") return `${renderPointList("AMT")}<h3>Coordenadas de referencia</h3>${renderTable("AMT", "Puntos del mapa", { kind: "pn-sectors" })}<p class="table-note">Coordenadas aproximadas; verificar antes de usar en campo.</p>`;
+    if (tab === "Simbología") return `<h3>Simbología del mapa</h3>${renderTable("AMT", "Simbología")}`;
+    return `<h3>Observaciones de la lámina</h3>${renderTable("AMT", "Observaciones")}`;
   }
 
   function pointSet(unit) { return { PN: PN_POINTS, AMT: AMT_POINTS, DMGR: DMGR_POINTS }[unit]; }
@@ -499,7 +535,7 @@
   }
 
   function colorLabel(point, unit) {
-    if (unit === "PN" || unit === "DMGR") return point.type;
+    if (point.type) return point.type;
     return { yellow: "Amarillo", blue: "Azul", purple: "Morado", red: "Rojo", orange: "Naranja", white: "Blanco", green: "Verde" }[point.color];
   }
 
@@ -516,12 +552,12 @@
     if (!state.subtab[route]) state.subtab[route] = TABS[route][0];
     const markers = points.map((point, index) => `<button class="map-marker ${state.selectedPoint === index ? "selected" : ""} ${state.relatedPoints.includes(index) ? "related" : ""}" type="button" data-point-index="${index}" data-point-unit="${map.dataKey}" title="${escapeHTML(point.name)}" aria-label="${escapeHTML(point.name)}" style="left:${point.x / map.width * 100}%;top:${point.y / map.height * 100}%;--marker-color:${COLORS[point.color]}"></button>`).join("");
     const legends = legendSet(route).map(({ id, label, box: [x, y, w, h] }) => `<button class="map-hotspot ${state.mapLegend === id ? "active" : ""}" type="button" data-map-legend="${id}" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" style="left:${x / map.width * 100}%;top:${y / map.height * 100}%;width:${w / map.width * 100}%;height:${h / map.height * 100}%"></button>`).join("");
-    return `<section class="map-layout" data-map-route="${route}"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>${map.title}</h2><p>${map.event || "Evento 8"} · Distrito Metropolitano de Quito</p></div><span class="map-badge">MAPA OPERATIVO</span></div>
+    return `<section class="map-layout" data-map-route="${route}"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>${map.title}</h2><p>${map.subtitle || `${map.event || "Evento 8"} · Distrito Metropolitano de Quito`}</p></div><span class="map-badge">MAPA OPERATIVO</span></div>
       <div class="map-toolbar"><div class="filter-list">${filters.map(filter => `<button class="filter-chip" type="button" data-filter="${escapeHTML(filter)}" aria-pressed="${state.filters[route].has(filter)}"><span class="filter-swatch" style="--swatch:${COLORS[points.find(point => colorLabel(point, map.dataKey) === filter).color]}"></span>${escapeHTML(filter)}</button>`).join("")}</div>
       ${renderZoomControls(true)}</div>
       <div class="map-viewport" aria-label="Visor interactivo del mapa"><div class="map-content" style="--map-ratio:${map.ratio}"><img class="map-image" src="${map.path}" alt="Mapa operativo ${map.short}"><div class="marker-layer">${legends}${markers}</div></div></div>
       <div class="map-caption"><span>${legendSet(route).length ? "Clic en la simbología o en los paneles para desplegar información · " : ""}Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${points.length} puntos</span></div></div>
-      <aside class="side-panel"><div class="panel-title-row"><div><h2>${map.short}</h2><p>${map.title}</p></div><span class="unit-flag">${(map.event || "Evento 8").toUpperCase()}</span></div>
+      <aside class="side-panel"><div class="panel-title-row"><div><h2>${map.short}</h2><p>${map.title}</p></div><span class="unit-flag">${(map.flag || map.event || "Evento 8").toUpperCase()}</span></div>
       <div class="kpi-grid">${KPI[route].map(([value, label]) => `<div class="kpi"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`).join("")}</div>
       <section class="detail-box" aria-live="polite"><p class="detail-label">${legendSet(route).length ? "Detalle" : "Detalle del punto"}</p>${renderDetail(map.dataKey, state.selectedPoint === null ? null : points[state.selectedPoint])}</section>
       <nav class="data-tabs" aria-label="Datos de ${map.short}">${TABS[route].map(tab => `<button class="data-tab ${state.subtab[route] === tab ? "active" : ""}" type="button" data-subtab="${escapeHTML(tab)}">${escapeHTML(tab)}</button>`).join("")}</nav>
@@ -542,7 +578,7 @@
   const DEFAULT_EVENT_META = EVENT_META.innerHTML;
   function updateEventMeta(route) {
     const map = MAPS[route];
-    EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)} <span>·</span> Distrito Metropolitano de Quito` : DEFAULT_EVENT_META;
+    EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)}${route === "amt" ? "" : " <span>·</span> Distrito Metropolitano de Quito"}` : DEFAULT_EVENT_META;
   }
 
   function render() {
@@ -625,7 +661,7 @@
       const closing = state.mapLegend === legend.id;
       state.mapLegend = closing ? null : legend.id;
       state.selectedPoint = null;
-      state.relatedPoints = !closing && legend.related ? pointSet(unit).map((point, index) => [].concat(legend.related).includes(point.type) ? index : -1).filter(index => index >= 0) : [];
+      state.relatedPoints = closing ? [] : pointSet(unit).map((point, index) => (legend.related && [].concat(legend.related).includes(point.type)) || (legend.sectors && point.sectors?.some(key => legend.sectors.includes(key))) ? index : -1).filter(index => index >= 0);
       if (!closing) state.subtab[route] = legend.tab;
       refreshMap();
       if (!closing) MAIN.querySelector(".detail-box").scrollIntoView({ behavior: "smooth", block: "nearest" });

@@ -1,4 +1,4 @@
-// Datos transcritos directamente de las hojas Excel de PN (Evento 3) y AMT.
+// Datos transcritos directamente de las hojas Excel de PN (Evento 3) y AMT (despliegue vía E28).
 window.ENOS_DATA = {
   "PN": {
     // Evento 3 · fuente: PN/Despliegue_Evento3_Zona9_DMQ.xlsx (lámina TERCERA SITUACIÓN).
@@ -94,444 +94,97 @@ window.ENOS_DATA = {
     }
   },
   "AMT": {
+    // Despliegue operativo AMT · fuente: PN/AMT_Despliegue_Control_Seguridad_Movilidad.xlsx (lámina AMT).
+    // La primera columna de cada hoja enlaza con los marcadores del mapa (campo sectors de AMT_POINTS).
     "sheets": {
       "Datos generales": [
-        [
-          "DESPLIEGUE OPERATIVO AMT – EVENTO 8",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Campo",
-          "Detalle"
-        ],
-        [
-          "Institución",
-          "AMT – Agencia Metropolitana de Tránsito"
-        ],
-        [
-          "Evento",
-          "Despliegue Operativo AMT – Evento 8"
-        ],
-        [
-          "Tipo de evento",
-          "Inundaciones, deslizamientos y colapsos de infraestructura"
-        ],
-        [
-          "Fecha y hora del evento",
-          "02/11/2028 – 01:00"
-        ],
-        [
-          "Ámbito (mapa)",
-          "Distrito Metropolitano de Quito (DMQ)"
-        ],
-        [
-          "Provincias limítrofes (mapa)",
-          "Pichincha, Imbabura, Sucumbíos, Napo, Cotopaxi, Manabí"
-        ],
-        [
-          "Escala del mapa",
-          "0 – 5 – 10 – 15 km"
-        ],
-        [
-          "Objetivo operativo",
-          "Reducir la exposición al riesgo, prevenir siniestros y garantizar el acceso seguro de los organismos de primera respuesta."
-        ],
-        [
-          "Mensaje institucional",
-          "La AMT garantiza la movilidad segura, el control del tránsito y el apoyo a los organismos de primera respuesta."
-        ]
+        ["DESPLIEGUE OPERATIVO AMT – CONTROL, SEGURIDAD Y MOVILIDAD", null], [null, null],
+        ["Campo", "Detalle"],
+        ["Institución", "AMT – Agencia Metropolitana de Tránsito"],
+        ["Despliegue", "Control, seguridad y movilidad dentro de nuestra jurisdicción"],
+        ["Eje vial", "Vía E28 (Nanegalito – Tulipe/Gualea – Pacto – Mashpi)"],
+        ["Desvíos", "Hacia el sur por la vía Alóag – Santo Domingo (3 filtros)"],
+        ["Incidente", "Deslizamiento en el sector Tulipe / Gualea"],
+        ["Total logística y personal", "37 recursos (22 agentes + 4 patrulleros + 11 motorizados)"],
+        ["Nuestra misión", "Garantizar la seguridad vial, facilitar la circulación y apoyar a la ciudadanía en situaciones de emergencia, dentro de nuestra jurisdicción."],
+        ["Lema", "Por una movilidad segura y solidaria"],
+        ["Mensaje", "Trabajamos por una ciudad más segura y ordenada"]
       ],
-      "Recursos totales": [
-        [
-          "RECURSOS TOTALES",
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          "Recurso",
-          "Cantidad",
-          "Observación"
-        ],
-        [
-          "Total agentes AMT",
-          1333,
-          null
-        ],
-        [
-          "Agentes por turno de 8 horas",
-          933,
-          "70%"
-        ],
-        [
-          "Agentes por turno de 12 horas",
-          400,
-          "30%"
-        ],
-        [
-          "Motos",
-          187,
-          "Aproximado"
-        ],
-        [
-          "Patrulleros",
-          47,
-          "Aproximado"
-        ],
-        [
-          "Puntos de emergencia",
-          15,
-          null
-        ]
+      "Puntos de control": [
+        ["PUNTOS DE CONTROL", null, null, null, null, null], [null, null, null, null, null, null],
+        ["Punto", "Ubicación", "Agentes", "Patrulleros", "Motos", "Total"],
+        ["Punto de control 1", "Nanegalito – Vía E28", 6, 2, 0, 8],
+        ["Punto de control 2", "Desvío Km 78 – Entrada a Tulipe / Gualea", 4, 0, 4, 8],
+        ["Punto de control 3", "Eje central Pacto – Mashpi", 6, 2, 4, 12],
+        ["TOTAL", null, 16, 4, 8, 28]
       ],
-      "Distribución por punto": [
-        [
-          "DISTRIBUCIÓN DE ACTS, MOTOS Y PATRULLEROS POR PUNTO DE EMERGENCIA",
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          "N.º",
-          "Punto de emergencia",
-          "ACTS asignados",
-          "Motos",
-          "Patrulleros"
-        ],
-        [
-          1,
-          "Centro Histórico",
-          12,
-          4,
-          2
-        ],
-        [
-          2,
-          "Comité del Pueblo",
-          8,
-          3,
-          1
-        ],
-        [
-          3,
-          "Concepción",
-          6,
-          2,
-          1
-        ],
-        [
-          4,
-          "Cotocollao",
-          7,
-          3,
-          1
-        ],
-        [
-          5,
-          "Puengasí",
-          5,
-          2,
-          1
-        ],
-        [
-          6,
-          "Guamaní",
-          6,
-          2,
-          1
-        ],
-        [
-          7,
-          "La Argelia",
-          7,
-          3,
-          1
-        ],
-        [
-          8,
-          "La Ecuatoriana",
-          6,
-          2,
-          1
-        ],
-        [
-          9,
-          "La Ferroviaria",
-          4,
-          1,
-          1
-        ],
-        [
-          10,
-          "Cuenca del río Monjas y Pomasquí",
-          12,
-          4,
-          2
-        ],
-        [
-          11,
-          "Prolongación Av. Simón Bolívar y Av. Carlos Fortines",
-          12,
-          4,
-          2
-        ],
-        [
-          12,
-          "La Capilla (Calderón) y La Bota",
-          10,
-          3,
-          2
-        ],
-        [
-          13,
-          "La Gasca, La Comuna, Atucucho y San Juan",
-          12,
-          4,
-          2
-        ],
-        [
-          14,
-          "Monjas, El Madrigal, parque Cuscungo y autopista General Rumiñahui",
-          10,
-          3,
-          2
-        ],
-        [
-          15,
-          "Vía Quito–Cayambe (peaje)",
-          6,
-          2,
-          1
-        ],
-        [
-          null,
-          "SUBTOTAL PUNTOS",
-          123,
-          42,
-          21
-        ],
-        [
-          null,
-          "RESERVA OPERATIVA",
-          30,
-          10,
-          5
-        ],
-        [
-          null,
-          "TOTAL (puntos + reserva)",
-          153,
-          52,
-          26
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          "Nota de la imagen: la distribución de recursos se refiere y puede ajustarse a la disponibilidad real del personal y medios.",
-          null,
-          null,
-          null,
-          null
-        ]
+      "Funciones": [
+        ["FUNCIONES Y ACCIONES POR PUNTO", null], [null, null],
+        ["Punto", "Función / acción"],
+        ["Punto de control 1", "Agentes: cierre de vía."],
+        ["Punto de control 1", "Desvían el transporte pesado hacia la vía Alóag – Santo Domingo."],
+        ["Punto de control 1", "Retienen el tráfico liviano en zona segura."],
+        ["Punto de control 2", "Agentes: cierre y control · motos: avanzadas y apoyo."],
+        ["Punto de control 2", "Controlan el perímetro del deslizamiento."],
+        ["Punto de control 2", "Guían a los vehículos de asistencia humanitaria y maquinaria pesada de la Prefectura."],
+        ["Punto de control 3", "Patrulleros: área urbana y rural · motos: avanzadas y apoyo."],
+        ["Punto de control 3", "Desplegados en el área urbana de Pacto y accesos rurales."],
+        ["Punto de control 3", "Coordinan el traslado seguro de víveres a los albergues de 25 de Septiembre y La Sexta."]
       ],
-      "Actividades AMT": [
-        [
-          "ACTIVIDADES ESPECÍFICAS AMT – SEGURIDAD VIAL Y GESTIÓN DEL RIESGO",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "N.º",
-          "Actividad"
-        ],
-        [
-          1,
-          "Desplegar agentes en puntos críticos y accesos a zonas afectadas."
-        ],
-        [
-          2,
-          "Ejecutar cierres preventivos y desvíos coordinados ante inundaciones, deslizamientos o colapsos."
-        ],
-        [
-          3,
-          "Controlar tránsito y mantener corredores libres para Bomberos, Salud, Policía y equipos de respuesta."
-        ],
-        [
-          4,
-          "Monitorear condiciones viales y reportar novedades georreferenciadas al ECU 911 / COE-M."
-        ],
-        [
-          5,
-          "Coordinar con EPMMOP, administraciones zonales y organismos de respuesta la señalización, delimitación y reapertura segura."
-        ],
-        [
-          6,
-          "Gestionar rutas alternas, movilidad peatonal y protección de usuarios vulnerables."
-        ],
-        [
-          7,
-          "Mantener enlace operativo y actualización de información durante todo el evento."
-        ],
-        [
-          8,
-          "Activar reserva, motos y patrulleros según evolución del incidente y priorización."
-        ]
+      "Desvíos hacia el sur": [
+        ["DESVÍOS HACIA EL SUR (VÍA ALÓAG – SANTO DOMINGO)", null, null, null], [null, null, null, null],
+        ["Filtro", "Ubicación", "Agentes", "Motorizados"],
+        ["1.er filtro", "Redondel del Condado", 2, 1],
+        ["2.º filtro", "Intercambiador del Portal Shopping", 2, 1],
+        ["3.er filtro", "Redondel de San Antonio de Pichincha", 2, 1],
+        ["TOTAL", null, 6, 3]
+      ],
+      "Cierre especial": [
+        ["CIERRE ESPECIAL – VÍA CUSUBAMBA", null], [null, null],
+        ["Punto", "Detalle"],
+        ["Cierre especial", "Desvío de vehículos pesados hacia la vía Alóag – Santo Domingo, para evitar que lleguen a la Panamericana Norte y generen congestión."],
+        ["Cierre especial", "Desvío adicional en la Y de Cusubamba para vehículos pesados."],
+        ["Cierre especial", "Se gestiona en coordinación con el Escuadrón de Carretera."]
+      ],
+      "Resumen logística": [
+        ["RESUMEN DE LOGÍSTICA Y PERSONAL", null, null, null], [null, null, null, null],
+        ["Recurso", "Puntos de control", "Desvíos", "Total"],
+        ["Agentes", 16, 6, 22],
+        ["Patrulleros", 4, 0, 4],
+        ["Motorizados", 8, 3, 11],
+        ["TOTAL LOGÍSTICA Y PERSONAL", 28, 9, 37]
       ],
       "Puntos del mapa": [
-        [
-          "PUNTOS SEÑALADOS EN EL MAPA",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Punto en el mapa",
-          "Color del marcador"
-        ],
-        [
-          "Vía Quito–Cayambe (peaje)",
-          "Amarillo"
-        ],
-        [
-          "Pomasquí",
-          "Azul"
-        ],
-        [
-          "Calderón (La Capilla)",
-          "Morado"
-        ],
-        [
-          "La Bota",
-          "Azul"
-        ],
-        [
-          "Cotocollao",
-          "Rojo"
-        ],
-        [
-          "Atucucho, La Comuna, San Juan",
-          "Azul"
-        ],
-        [
-          "Comité del Pueblo",
-          "Rojo"
-        ],
-        [
-          "Concepción",
-          "Rojo"
-        ],
-        [
-          "Monjas (Cuscungo / El Madrigal)",
-          "Naranja"
-        ],
-        [
-          "DMQ (Centro Histórico)",
-          "Ícono de iglesia"
-        ],
-        [
-          "Av. Carlos Fortines (Prolongación Simón Bolívar)",
-          "Amarillo"
-        ],
-        [
-          "El Madrigal",
-          "Naranja"
-        ],
-        [
-          "Puengasí",
-          "Morado"
-        ],
-        [
-          "La Argelia",
-          "Rojo"
-        ],
-        [
-          "Parque Cuscungo",
-          "Azul"
-        ],
-        [
-          "La Ecuatoriana",
-          "Verde"
-        ],
-        [
-          "Guamaní",
-          "Verde"
-        ],
-        [
-          "La Ferroviaria",
-          "Rojo"
-        ],
-        [
-          "La Capilla (Calderón) y La Bota",
-          "Morado"
-        ],
-        [
-          "Autopista General Rumiñahui (Corredor dentro del DMQ)",
-          "Amarillo"
-        ]
+        ["PUNTOS SEÑALADOS EN EL MAPA", null, null], [null, null, null],
+        ["Punto", "Tipo", "Coordenadas aprox. (lat, lon)"],
+        ["Punto de control 1", "Punto de control", "0.0675, -78.6790"],
+        ["Punto de control 2", "Punto de control", "0.0850, -78.7150"],
+        ["Punto de control 3", "Punto de control", "0.1610, -78.7860"],
+        ["1.er filtro", "Filtro de desvío", "-0.1010, -78.4990"],
+        ["2.º filtro", "Filtro de desvío", "-0.0880, -78.4790"],
+        ["3.er filtro", "Filtro de desvío", "-0.0090, -78.4450"],
+        ["Cierre especial", "Desvío de vehículos pesados", "-0.0050, -78.5200 (sin verificar)"],
+        ["Deslizamiento", "Incidente", "0.0950, -78.7300"]
       ],
       "Simbología": [
-        [
-          "SIMBOLOGÍA DEL MAPA",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Símbolo",
-          "Significado"
-        ],
-        [
-          "Marcador rojo",
-          "Inundación"
-        ],
-        [
-          "Marcador amarillo",
-          "Deslizamiento / Colapso"
-        ],
-        [
-          "Marcador morado",
-          "Control vial"
-        ],
-        [
-          "Línea amarilla",
-          "Corredor prioritario"
-        ],
-        [
-          "Contorno blanco",
-          "Límite DMQ"
-        ],
-        [
-          "Línea azul",
-          "Vías principales"
-        ]
+        ["SIMBOLOGÍA DEL MAPA", null], [null, null],
+        ["Símbolo", "Significado"],
+        ["Línea naranja", "Vía E28"],
+        ["Línea amarilla", "Ruta principal"],
+        ["Flecha azul", "Desvíos vía Alóag – Santo Domingo"],
+        ["Flecha morada", "Desvío a Cusubamba (vehículos pesados)"],
+        ["Contorno blanco punteado", "Límite de jurisdicción AMT"],
+        ["Triángulo rojo", "Deslizamiento"],
+        ["Señal de prohibido", "Desvío para pesados (Y de Cusubamba)"],
+        ["Ícono de camión", "Desvío de vehículos pesados"]
+      ],
+      "Observaciones": [
+        ["OBSERVACIONES DE LA LÁMINA", null], [null, null],
+        ["Tema", "Observación"],
+        ["Numeración", "En el mapa, el recuadro del punto 3 dice «Punto de control 2 Pacto – Mashpi»; el panel lateral lo identifica como Punto de control 3."],
+        ["Filtros", "Los círculos de los filtros en el mapa muestran 3, 2, 2; se usó el orden de los rótulos (1.er, 2.º y 3.er filtro)."],
+        ["Textos", "«tráfico fulono» se interpretó como tráfico liviano y «prolectura» como Prefectura."],
+        ["Albergues", "25 de Septiembre y La Sexta se mencionan sin ubicación en el mapa."]
       ]
     }
   }
