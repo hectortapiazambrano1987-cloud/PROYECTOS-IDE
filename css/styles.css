@@ -111,6 +111,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .brand-lockup h1 span { color: var(--yellow); }
 .logo-strip { display: flex; grid-column: 2; grid-row: 1; align-items: center; justify-content: center; gap: 14px; }
 .logo-strip img { display: block; width: auto; height: 52px; object-fit: contain; }
+/* Logo horizontal con texto oscuro: fondo blanco para que se lea sobre el encabezado oscuro. */
+.sngr-page { display: grid; min-height: 58vh; place-items: center; padding: 32px 18px; text-align: center; }
+.sngr-page img { width: min(520px, 90vw); height: auto; padding: 14px 20px; border-radius: 10px; background: #ffffff; }
+.sngr-page h2 { margin: 22px 0 0; font-size: 26.4px; }
+.sngr-page p { margin: 8px 0 0; color: var(--muted); font-size: 17.2px; }
+.logo-strip .logo-wide { box-sizing: border-box; height: 44px; padding: 5px 9px; border-radius: 6px; background: #ffffff; }
 .event-meta { grid-column: 3; grid-row: 1; justify-self: end; margin: 0; color: var(--text-soft); font-size: 15.8px; white-space: nowrap; }
 .event-meta span { padding: 0 5px; color: var(--yellow); }
 .primary-nav { display: flex; grid-column: 1 / -1; gap: 4px; margin-top: 10px; }
@@ -334,7 +340,7 @@ tr.total-row td { color: var(--yellow); font-weight: 700; }
 .legend-dot { width: 9px; height: 9px; border: 1px solid #ffffff55; border-radius: 50%; background: var(--point-color); }
 .map-empty-state { padding: 24px; color: var(--muted); text-align: center; }
 
-@media (max-width: 1280px) {
+@media (max-width: 1500px) {
   .event-meta { white-space: normal; text-align: right; }
   .logo-strip { gap: 10px; }
   .logo-strip img { height: 44px; }
@@ -347,6 +353,7 @@ tr.total-row td { color: var(--yellow); font-weight: 700; }
   .topbar { grid-template-columns: 1fr; gap: 8px; padding-right: 16px; padding-left: 16px; }
   .logo-strip { grid-column: 1; grid-row: auto; flex-wrap: wrap; }
   .logo-strip img { height: 40px; }
+  .logo-strip .logo-wide { height: 36px; padding: 4px 7px; }
   .event-meta { grid-column: 1; grid-row: auto; justify-self: start; white-space: normal; text-align: left; }
   .primary-nav { grid-column: 1; margin-top: 0; overflow-x: auto; }
   .primary-nav a { padding: 11px 13px 12px; }

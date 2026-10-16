@@ -14,7 +14,7 @@
     amt: { path: "PN/AMT MAPA DESPLIEGUE.jpg", width: 1264, height: 843, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1264 / 843, event: "Despliegue operativo", date: "Vía E28 – Noroccidente", place: "", subtitle: "Control, seguridad y movilidad · Vía E28 y desvíos hacia el sur", flag: "VÍA E28" },
     dmgr: { path: "MDMQ/MAPA MDMQ.jpeg", width: 1536, height: 1024, title: "Secretaría de Seguridad y Gestión de Riesgos", short: "DMGR", dataKey: "DMGR", ratio: 1.5 }
   };
-  const ROUTES = ["ide", "dmgr", "pn", "bomberos", "amt"];
+  const ROUTES = ["sngr", "ide", "dmgr", "pn", "bomberos", "amt"];
   const TABS = {
     ide: ["Resumen", "Cantones", "Zonas de impacto", "Población", "Personal", "Medios", "Instituciones", "Puntos"],
     dmgr: ["Resumen", "Acciones", "Inundaciones", "Por AZ", "Movimientos", "Recursos", "Puntos", "Simbología"],
@@ -662,13 +662,19 @@
     EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)}${place ? ` <span>·</span> ${escapeHTML(place)}` : ""}` : DEFAULT_EVENT_META;
   }
 
+  // Pestaña SNGR: provisional hasta que se cargue su información.
+  function renderSngr() {
+    return `<section class="sngr-page"><div><img src="LOGOS/01-sngr.png" alt="Secretaría Nacional de Gestión de Riesgos"><h2>Secretaría Nacional de Gestión de Riesgos</h2><p>Información pendiente de cargar</p></div></section>`;
+  }
+
   function render() {
     const route = location.hash.slice(1).toLowerCase();
     state.route = ROUTES.includes(route) ? route : "ide";
     updateNav(state.route);
     updateEventMeta(state.route);
     document.title = `ENOS 2026 IDE "SHYRIS" · ${state.route.toUpperCase()}`;
-    if (state.route === "ide") { MAIN.innerHTML = renderMap("ide") + renderIdeInfo(); bindMap("ide"); bindIdeInfo(); }
+    if (state.route === "sngr") MAIN.innerHTML = renderSngr();
+    else if (state.route === "ide") { MAIN.innerHTML = renderMap("ide") + renderIdeInfo(); bindMap("ide"); bindIdeInfo(); }
     else if (MAPS[state.route]) { MAIN.innerHTML = renderMap(state.route); bindMap(state.route); }
     else { MAIN.innerHTML = renderBomberos(); bindBomberos(); }
   }
