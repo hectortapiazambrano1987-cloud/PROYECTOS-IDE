@@ -1,0 +1,105 @@
+// Datos transcritos del Excel MDMQ/Despliegue_Evento8_Inundaciones_DMQ.xlsx (mismo formato de hojas que data.js).
+window.ENOS_DATA.DMGR = {
+  "sheets": {
+    "Datos generales": [
+      ["DESPLIEGUE OPERATIVO INSTITUCIONAL – EVENTO 8"], [],
+      ["Campo", "Detalle"],
+      ["Institución", "Alcaldía Metropolitana de Quito – Secretaría de Seguridad y Gestión de Riesgos"],
+      ["Evento", "Evento 8"],
+      ["Tipo de evento", "Inundaciones y movimientos en masa"],
+      ["Fecha y hora del evento", "02/11/2028 – 01:00"],
+      ["Localización", "Pichincha – Distrito Metropolitano de Quito (DMQ)"],
+      ["Zona del mapa", "Distrito Metropolitano de Quito (DMQ) – Zona 9"]
+    ],
+    "Acciones principales": [
+      ["ACCIONES PRINCIPALES"], [],
+      ["N.º", "Acción", "Detalle"],
+      ["1", "Pronósticos – COE (lluvias sur)", "Activación de chats comunitarios SAT"],
+      ["1", "Pronósticos – COE (lluvias sur)", "Análisis y seguimiento de pronósticos"],
+      ["2", "Vigilancia y monitoreo", "112 quebradas"],
+      ["3", "Despacho de CBQ", "Búsqueda y rescate"],
+      ["3", "Despacho de CBQ", "Unidad SCI y APH"],
+      ["3", "Despacho de CBQ", "Incendios (estructurales y forestales)"],
+      ["4", "Despacho de administraciones zonales", "Evaluación de daños (15 personas – 5 AZ)"],
+      ["4", "Despacho de administraciones zonales", "Evacuación preventiva de familias"],
+      ["5", "Activación de maquinaria para limpieza", "EPMMOP, EPMAPS y EMSEGURIDAD"],
+      ["6", "Alojamientos temporales", "45 familias de capacidad"],
+      ["6", "Alojamientos temporales", "6 CAT"],
+      ["6", "Alojamientos temporales", "1 Casa Somos"],
+      ["7", "Asistencia humanitaria", "1.296 alimentos calientes"],
+      ["7", "Asistencia humanitaria", "324 kits de asistencia (AM e higiene)"]
+    ],
+    "Inundaciones en barrios": [
+      ["ZONAS DE INUNDACIONES EN BARRIOS"], [],
+      ["N.º", "Barrio", "Familias", "Personas", "Administración zonal"],
+      ["1", "Comité del Pueblo", "56", "224", "La Delicia"],
+      ["2", "Concepción", "32", "128", "La Delicia"],
+      ["3", "Cotocollao", "41", "164", "La Delicia"],
+      ["4", "Centro Histórico", "95", "380", "Manuela Sáenz"],
+      ["5", "Puengasí", "12", "48", "Manuela Sáenz"],
+      ["6", "Guamaní", "21", "84", "Quitumbe"],
+      ["7", "La Ecuatoriana", "23", "92", "Quitumbe"],
+      ["8", "La Argelia", "37", "148", "Eloy Alfaro"],
+      ["9", "La Ferroviaria", "7", "28", "Eloy Alfaro"],
+      ["TOTAL", "", "324", "1296", ""]
+    ],
+    "Inundaciones por AZ": [
+      ["INUNDACIONES – RESUMEN POR ADMINISTRACIÓN ZONAL"], [],
+      ["Administración zonal", "N.º barrios", "Familias", "Personas"],
+      ["La Delicia", "3", "129", "516"],
+      ["Manuela Sáenz", "2", "107", "428"],
+      ["Quitumbe", "2", "44", "176"],
+      ["Eloy Alfaro", "2", "44", "176"],
+      ["TOTAL", "9", "324", "1296"]
+    ],
+    "Movimientos en masa": [
+      ["ZONAS DE MOVIMIENTOS EN MASA"], [],
+      ["N.º", "Sector", "Administración zonal", "Situación"],
+      ["1", "Av. Simón Bolívar y Av. Carlos Fortines", "Calderón", "Caos vehicular"],
+      ["2", "Calderón (La Capilla)", "Calderón", "-"],
+      ["3", "La Bota", "La Delicia", "Atrapados"],
+      ["4", "Atucucho", "La Delicia", "Atrapados"],
+      ["5", "Pomasqui y Monjas", "La Delicia", "-"],
+      ["6", "Monjas", "Manuela Sáenz", "Atrapados"],
+      ["7", "El Madrigal", "Manuela Sáenz", "Atrapados"],
+      ["8", "Parque Cuscungo", "Manuela Sáenz", "-"],
+      ["9", "Autopista General Rumiñahui", "Manuela Sáenz", "Caos vehicular"],
+      ["10", "San Juan", "Manuela Sáenz", "Atrapados"],
+      ["11", "La Gasca", "Eugenio Espejo", "Atrapados"],
+      ["12", "La Comuna", "Eugenio Espejo", "Atrapados"]
+    ],
+    "Recursos e instituciones": [
+      ["RECURSOS E INSTITUCIONES DESPLEGADAS"], [],
+      ["N.º", "Institución", "Personal", "Recursos"],
+      ["1", "CACM", "12", "16"],
+      ["2", "DMGR", "5", "3"],
+      ["3", "AMT", "187", "64"],
+      ["4", "CBQ", "150", "90"],
+      ["5", "PPNN", "180", "34"],
+      ["6", "IDE (FFAA)", "-", "79"],
+      ["7", "COEM", "5", "3"],
+      ["8", "AZ", "30", "10"],
+      ["9", "EPMAPS", "10", "3"],
+      ["10", "EPMMOP", "30", "26"],
+      ["11", "EMSEGURIDAD", "30", "12"],
+      ["12", "PATRONATO", "16", "4"],
+      ["13", "SIS", "16", "5"],
+      ["14", "Sin etiqueta (ícono de escudo)", "20", "5"],
+      ["15", "EMASEO", "3", "3"],
+      ["16", "SAQ", "6", "2"],
+      ["TOTAL", "", "700", "359"]
+    ],
+    "Mapa y simbología": [
+      ["MAPA – UBICACIONES Y SIMBOLOGÍA"], [],
+      ["Categoría", "Elemento"],
+      ["Simbología", "Zonas de inundaciones (punto rojo)"],
+      ["Simbología", "Movimientos en masa (triángulo naranja)"],
+      ["Simbología", "Vías principales"],
+      ["Simbología", "Ríos y quebradas principales"],
+      ["Simbología", "Límite parroquial (DMQ)"],
+      ["Simbología", "Límite del DMQ"],
+      ["Escala", "0 – 5 – 10 – 15 km"],
+      ["Orientación", "Norte hacia arriba"]
+    ]
+  }
+};
