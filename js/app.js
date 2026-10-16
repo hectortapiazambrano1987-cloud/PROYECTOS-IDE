@@ -9,14 +9,14 @@
   const MAIN = document.querySelector("#app-main");
   const NAV_LINKS = [...document.querySelectorAll("[data-route]")];
   const MAPS = {
-    pn: { path: "PN/PN MAPA MEJORADO.png", width: 1536, height: 1024, title: "Policía Nacional", short: "PN", dataKey: "PN", ratio: 1.5 },
+    pn: { path: "PN/PN MAPA EVENTO 3.jpeg", width: 1536, height: 1024, title: "Policía Nacional", short: "PN", dataKey: "PN", ratio: 1.5, event: "Evento 3", date: "27/11/2028 – 03:00" },
     amt: { path: "PN/AMT MAPA MEJORADO.png", width: 1672, height: 941, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1672 / 941 },
     dmgr: { path: "MDMQ/MAPA MDMQ.jpeg", width: 1536, height: 1024, title: "Secretaría de Seguridad y Gestión de Riesgos", short: "DMGR", dataKey: "DMGR", ratio: 1.5 }
   };
   const ROUTES = ["ide", "dmgr", "pn", "bomberos", "amt"];
   const TABS = {
     dmgr: ["Resumen", "Acciones", "Inundaciones", "Por AZ", "Movimientos", "Recursos", "Puntos", "Simbología"],
-    pn: ["Resumen", "Personal", "Sectores", "Logística", "Alojamientos", "Turnos", "Puntos", "Simbología + Nota"],
+    pn: ["Resumen", "Personal", "Detalle por punto", "Logística", "Coordinación", "Turnos", "Puntos", "Simbología + Nota"],
     amt: ["Resumen", "Recursos", "Distribución", "Actividades", "Puntos", "Simbología"]
   };
   const COLORS = {
@@ -24,32 +24,32 @@
     orange: "#f57c00", green: "#2e9e4f", yellow: "#f2c94c", white: "#ffffff"
   };
   // Coordenadas de los puntos indicadas sobre las dimensiones originales de cada mapa.
+  // PN · Evento 3: coordenadas en píxeles sobre "PN/PN MAPA EVENTO 3.jpeg" (1536 × 1024).
+  // sectors: valores de la primera columna de las hojas de PN relacionados con el punto.
   const PN_POINTS = [
-    { name: "Cotocollao", x: 700, y: 323, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Cotocollao"] },
-    { name: "Comité del Pueblo", x: 727, y: 384, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Comité del Pueblo"] },
-    { name: "Concepción", x: 727, y: 420, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Concepción"] },
-    { name: "Centro Histórico", x: 750, y: 490, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Centro Histórico"] },
-    { name: "Puengasí", x: 630, y: 571, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Puengasí"] },
-    { name: "La Argelia", x: 606, y: 605, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Argelia"] },
-    { name: "Guamaní", x: 603, y: 649, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Guamaní"] },
-    { name: "La Ecuatoriana", x: 640, y: 683, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Ecuatoriana"] },
-    { name: "La Ferroviaria", x: 592, y: 714, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Ferroviaria"] },
-    { name: "Pomasqui", x: 878, y: 268, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Pomasqui"] },
-    { name: "Calderón (La Capilla)", x: 884, y: 318, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Capilla (Calderón) y La Bota"] },
-    { name: "La Bota", x: 886, y: 369, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Capilla (Calderón) y La Bota"] },
-    { name: "Atucucho", x: 540, y: 376, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
-    { name: "La Comuna", x: 531, y: 406, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
-    { name: "San Juan", x: 567, y: 436, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
-    { name: "Monjas", x: 511, y: 481, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Monjas (Cuenca del río Monjas) y El Madrigal"] },
-    { name: "El Madrigal", x: 537, y: 529, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Monjas (Cuenca del río Monjas) y El Madrigal"] },
-    { name: "Av. Carlos Fortines", x: 828, y: 551, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Av. Simón Bolívar y Av. Carlos Fortines"] },
-    { name: "Parque Cuscungo", x: 802, y: 598, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: [] },
-    { name: "Prolongación Av. Simón Bolívar", x: 728, y: 640, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Av. Simón Bolívar y Av. Carlos Fortines"] },
-    { name: "Autopista General Rumiñahui", x: 862, y: 793, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Autopista General Rumiñahui (DMQ)"] },
-    ...[[821, 268], [769, 343], [793, 459], [676, 544], [760, 557], [651, 632], [597, 686]].map(([x, y], index) => ({
-      name: `Alojamiento temporal ${index + 1}`, x, y, type: "Alojamiento temporal", color: "purple", component: "Alojamientos temporales", sectors: [], accommodation: true
-    })),
-    { name: "Aeropuerto Mariscal Sucre", x: 805, y: 758, type: "Referencia", color: "blue", component: "Referencia", sectors: [] }
+    { name: "E28 Calacalí", x: 897, y: 390, type: "Control de tránsito", color: "red", sectors: ["E28 Calacalí"] },
+    { name: "Nanegal", x: 672, y: 367, type: "Control de tránsito", color: "red", sectors: ["Nanegal"] },
+    { name: "Redondel Mitad del Mundo", x: 858, y: 478, type: "Control de tránsito", color: "red", sectors: ["Redondel Mitad del Mundo"] },
+    { name: "Quito urbano", x: 800, y: 537, type: "Infraestructura estratégica", color: "blue", sectors: ["Quito urbano"] },
+    { name: "La Independencia", x: 891, y: 422, type: "Referencia vía E28", color: "white", sectors: ["La Independencia"], reference: true },
+    { name: "Zona de afectación E28", x: 712, y: 342, type: "Incidente", color: "amber", sectors: ["Zona de afectación E28"], incident: true },
+    { name: "Rumiñahui", x: 823, y: 725, type: "Coordinación fuera del DMQ", color: "yellow", sectors: ["Rumiñahui"] },
+    { name: "Mejía", x: 788, y: 830, type: "Coordinación fuera del DMQ", color: "yellow", sectors: ["Mejía"] },
+    { name: "Pedro Vicente Maldonado", x: 384, y: 437, type: "Coordinación fuera del DMQ", color: "yellow", sectors: ["Pedro Vicente Maldonado"] },
+    { name: "Puerto Quito", x: 384, y: 330, type: "Coordinación fuera del DMQ", color: "yellow", sectors: ["Puerto Quito"] }
+  ];
+  // Paneles clicables de la lámina PN (x, y, ancho, alto en píxeles de la imagen).
+  const PN_LEGENDS = [
+    { id: "talento", label: "Talento humano", box: [8, 118, 346, 130], tab: "Personal" },
+    { id: "distribucion", label: "Distribución del personal", box: [8, 255, 346, 262], tab: "Personal", related: ["Control de tránsito", "Infraestructura estratégica"] },
+    { id: "logistica", label: "Medios logísticos", box: [8, 525, 346, 185], tab: "Logística" },
+    { id: "turnos", label: "Turnos operativos", box: [8, 715, 346, 168], tab: "Turnos" },
+    { id: "nota", label: "Nota", box: [8, 890, 346, 112], tab: "Simbología + Nota", related: ["Coordinación fuera del DMQ"] },
+    { id: "simbologia", label: "Simbología", box: [372, 692, 315, 250], tab: "Simbología + Nota" },
+    { id: "detalle", label: "Detalle por punto de intervención", box: [1140, 152, 390, 395], tab: "Detalle por punto", related: ["Control de tránsito", "Infraestructura estratégica"] },
+    { id: "fuera", label: "Zonas fuera del DMQ – Coordinación", box: [1140, 555, 390, 197], tab: "Coordinación", related: ["Coordinación fuera del DMQ"] },
+    { id: "resumen", label: "Resumen total Zona 9 DMQ", box: [1140, 762, 390, 225], tab: "Resumen" },
+    { id: "via", label: "Vía E28 con afectación / cierre", box: [700, 360, 190, 90], tab: "Puntos", related: ["Incidente", "Referencia vía E28", "Control de tránsito"] }
   ];
   const AMT_POINTS = [
     { name: "Vía Quito–Cayambe (peaje)", x: 944, y: 193, color: "yellow", rows: [15] },
@@ -95,7 +95,7 @@
   ];
   const KPI = {
     dmgr: [["1.296", "personas afectadas"], ["324", "familias afectadas"], ["684", "personal servidores"], ["354", "recursos totales"]],
-    pn: [["60", "servidores por turno"], ["3", "turnos operativos"], ["15", "patrulleros"], ["14", "motocicletas"]],
+    pn: [["24", "servidores por turno"], ["4", "puntos de intervención"], ["5", "patrulleros"], ["4", "motocicletas"]],
     amt: [["1.333", "agentes totales"], ["187", "motos · aprox."], ["47", "patrulleros · aprox."], ["15", "puntos de emergencia"]]
   };
   const state = { route: "ide", subtab: {}, filters: {}, circles: true, zoom: 1, panX: 0, panY: 0, selectedPoint: null, relatedPoints: [], search: "", mapLegend: null, bombView: null, ideSection: "situacion", planHover: null, planPin: null, planOpen: false, planTab: "totales", planSort: null, planSearch: "", planExpanded: null };
@@ -115,7 +115,7 @@
     const body = rows.map(row => {
       const isTotal = String(row[0] || row[1] || "").toLowerCase().includes("total") || String(row[1] || "").toLowerCase().includes("subtotal");
       let relation = "";
-      if (options.kind === "pn-sectors") relation = escapeHTML(row[1] || "");
+      if (options.kind === "pn-sectors") relation = escapeHTML(row[0] || "");
       if (["amt-distribution", "dmgr-flood", "dmgr-mass"].includes(options.kind)) relation = escapeHTML(row[0] || "");
       return `<tr class="${options.kind ? "clickable" : ""} ${isTotal ? "total-row" : ""}" ${options.kind ? `data-row-kind="${options.kind}" data-row-value="${relation}"` : ""}>${row.map(value => `<td>${escapeHTML(value)}</td>`).join("")}</tr>`;
     }).join("");
@@ -395,7 +395,24 @@
     MAIN.querySelector(".map-viewport").addEventListener("pointerdown", event => { if (!event.target.closest(".bomb-hotspot")) hide(); });
   }
 
+  function legendSet(route) { return { dmgr: DMGR_LEGENDS, pn: PN_LEGENDS }[route] || []; }
+
+  function renderPnLegendDetail(legend) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    const rowsOf = sheet => sheetRows("PN", sheet).rows;
+    let body = "";
+    if (legend.id === "talento" || legend.id === "resumen") body = meta("Servidores policiales", "24") + meta("Patrulleros", "5") + meta("Motocicletas", "4") + meta("Unidades logísticas", "9");
+    else if (legend.id === "distribucion" || legend.id === "detalle") body = rowsOf("Distribución personal").map(row => meta(row[0], `${row[2]} servidores${row[1] ? ` · ${row[1]}` : ""}`)).join("");
+    else if (legend.id === "logistica") body = rowsOf("Medios logísticos").map(row => meta(row[0], `${row[1]}${row[0] === "TOTAL" ? " unidades" : ` · ${row[2]}`}`)).join("");
+    else if (legend.id === "turnos") body = rowsOf("Turnos").map(row => meta(row[0], `${row[1]} · ${row[2]}`)).join("");
+    else if (legend.id === "nota" || legend.id === "fuera") body = rowsOf("Zonas fuera del DMQ").map(row => meta(row[0], row[1])).join("");
+    else if (legend.id === "via") body = meta("Vía", "E28 Calacalí – Nanegal") + meta("Estado", "Afectación / cierre") + meta("Puntos de control", "E28 Calacalí y Nanegal (8 servidores c/u)") + `<p class="detail-meta">El triángulo rojo marca la zona de afectación sobre la vía.</p>`;
+    else body = rowsOf("Simbología y nota").filter(row => row[0] !== "NOTA").map(row => meta(row[0], row[1])).join("");
+    return `<h3 class="detail-name">${escapeHTML(legend.label)}</h3>${body}<p class="detail-meta detail-hint">Información ampliada en la pestaña «${escapeHTML(legend.tab)}».</p>`;
+  }
+
   function renderMapLegendDetail(id) {
+    if (state.route === "pn") return renderPnLegendDetail(PN_LEGENDS.find(item => item.id === id));
     const legend = DMGR_LEGENDS.find(item => item.id === id);
     const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
     let body = "";
@@ -417,8 +434,8 @@
   }
 
   function renderDetail(unit, point) {
-    if (!point && unit === "DMGR" && state.mapLegend) return renderMapLegendDetail(state.mapLegend);
-    if (!point) return `<p class="detail-empty">${unit === "DMGR" ? "Haz clic en la simbología, en los paneles del mapa o en un punto para consultar su información." : "Haz clic en un punto del mapa para consultar su información operativa."}</p>`;
+    if (!point && (unit === "DMGR" || unit === "PN") && state.mapLegend) return renderMapLegendDetail(state.mapLegend);
+    if (!point) return `<p class="detail-empty">${unit === "DMGR" || unit === "PN" ? "Haz clic en la simbología, en los paneles del mapa o en un punto para consultar su información." : "Haz clic en un punto del mapa para consultar su información operativa."}</p>`;
     if (unit === "DMGR") {
       if (point.floodRow) {
         const row = sheetRows("DMGR", "Inundaciones en barrios").rows.find(item => Number(item[0]) === point.floodRow);
@@ -428,13 +445,17 @@
       return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Movimiento en masa</p>${rows.map(row => `<p class="detail-meta"><strong>N.º ${escapeHTML(row[0])} · ${escapeHTML(row[1])}:</strong> AZ ${escapeHTML(row[2])} · situación: ${escapeHTML(row[3])}</p>`).join("")}`;
     }
     if (unit === "PN") {
-      if (point.accommodation) return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Alojamiento temporal</p><p class="detail-meta"><strong>Personal:</strong> 1H / 1M</p><p class="detail-meta">El mapa no numera los alojamientos.</p>`;
-      if (point.name === "Parque Cuscungo") return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> ${escapeHTML(point.type)}</p><p class="detail-meta">No figura en el listado de sectores con personal.</p>`;
-      const sectorRows = sheetRows("PN", "Sectores asignados").rows.filter(row => point.sectors.includes(row[1]));
-      const componentRow = sheetRows("PN", "Componentes").rows.find(row => row[0] === point.component);
-      const assigned = sectorRows.map(row => `${row[1]} (${row[2]} servidores)`).join("; ") || "Sin sector asignado en la hoja";
-      const staff = componentRow ? `${componentRow[1]} servidores; ${componentRow[2] || "sin equipo detallado"}` : "No consta en componentes";
-      return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> ${escapeHTML(point.type)}</p><p class="detail-meta"><strong>Servidores del sector:</strong> ${escapeHTML(sectorRows.map(row => row[2]).join(", ") || "No registrados")}</p><p class="detail-meta"><strong>Componente:</strong> ${escapeHTML(point.component)} · ${escapeHTML(staff)}</p><p class="detail-meta"><strong>Sector asignado:</strong> ${escapeHTML(assigned)}</p>`;
+      const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+      const coords = sheetRows("PN", "Puntos del mapa").rows.find(row => row[0] === point.name);
+      const where = coords ? meta("Coordenadas aprox.", coords[2]) : "";
+      const head = `<h3 class="detail-name">${escapeHTML(point.name)}</h3>${meta("Categoría", point.type)}`;
+      if (point.incident) return `${head}${meta("Vía", "E28 Calacalí – Nanegal")}${meta("Estado", "Afectación / cierre")}${where}<p class="detail-meta">Los puntos de control de tránsito de Nanegal y E28 Calacalí cubren este tramo.</p>`;
+      if (point.reference) return `${head}${meta("Vía", "E28")}${where}<p class="detail-meta">Punto de referencia sobre la vía afectada, sin personal asignado en la lámina.</p>`;
+      const outside = sheetRows("PN", "Zonas fuera del DMQ").rows.find(row => row[0] === point.name);
+      if (outside) return `${head}${meta("Ámbito", "Fuera del DMQ")}${meta("Acción", outside[1])}${where}`;
+      const staff = sheetRows("PN", "Distribución personal").rows.find(row => row[0] === point.name);
+      const resources = sheetRows("PN", "Detalle por punto").rows.filter(row => row[0] === point.name);
+      return `${head}${meta("Tarea", staff[1])}${meta("Total servidores", staff[2])}${where}<p class="detail-label bomb-tip-sub">Recursos policiales</p><ul class="detail-list">${resources.map(row => `<li>${escapeHTML(row[2])} · ${escapeHTML(row[1])}</li>`).join("")}</ul>${point.name === "Redondel Mitad del Mundo" ? '<p class="detail-meta">La lámina indica 2 servidores en total: el mismo personal de tránsito opera el patrullero.</p>' : ""}`;
     }
     const distribution = sheetRows("AMT", "Distribución por punto").rows;
     const related = distribution.filter(row => point.rows.includes(Number(row[0])));
@@ -454,13 +475,13 @@
       return `<h3>Mapa y simbología</h3>${renderTable("DMGR", "Mapa y simbología")}`;
     }
     if (unit === "PN") {
-      if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("PN", "Datos generales")}<h3>Componentes operativos</h3>${renderTable("PN", "Componentes")}`;
-      if (tab === "Personal") return `<h3>Distribución del personal</h3>${renderTable("PN", "Distribución personal")}<h3>Componentes</h3>${renderTable("PN", "Componentes")}`;
-      if (tab === "Sectores") return `<h3>Sectores asignados · seleccione una fila</h3>${renderTable("PN", "Sectores asignados", { kind: "pn-sectors" })}<p class="table-note">Las filas relacionadas se resaltan sobre el mapa.</p>`;
-      if (tab === "Logística") return `<h3>Medios logísticos requeridos</h3>${renderTable("PN", "Medios logísticos")}`;
-      if (tab === "Alojamientos") return `<h3>Alojamientos temporales</h3>${renderTable("PN", "Alojamientos")}<p class="table-note">En el mapa se muestran siete ubicaciones sin numeración individual.</p>`;
+      if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("PN", "Datos generales")}<h3>Distribución del personal · seleccione una fila</h3>${renderTable("PN", "Distribución personal", { kind: "pn-sectors" })}`;
+      if (tab === "Personal") return `<h3>Distribución del personal · seleccione una fila</h3>${renderTable("PN", "Distribución personal", { kind: "pn-sectors" })}<p class="table-note">El punto relacionado se resalta sobre el mapa.</p>`;
+      if (tab === "Detalle por punto") return `<h3>Recursos por punto de intervención · seleccione una fila</h3>${renderTable("PN", "Detalle por punto", { kind: "pn-sectors" })}<p class="table-note">«—»: recurso tripulado por personal ya contado. En el Redondel Mitad del Mundo la lámina indica 2 servidores en total.</p>`;
+      if (tab === "Logística") return `<h3>Medios logísticos</h3>${renderTable("PN", "Medios logísticos")}`;
+      if (tab === "Coordinación") return `<h3>Zonas fuera del DMQ · seleccione una fila</h3>${renderTable("PN", "Zonas fuera del DMQ", { kind: "pn-sectors" })}`;
       if (tab === "Turnos") return `<h3>Turnos operativos</h3>${renderTable("PN", "Turnos")}`;
-      if (tab === "Puntos") return renderPointList("PN");
+      if (tab === "Puntos") return `${renderPointList("PN")}<h3>Coordenadas de referencia</h3>${renderTable("PN", "Puntos del mapa", { kind: "pn-sectors" })}<p class="table-note">Coordenadas aproximadas para un mapa georreferenciado; verificar antes de usar en campo.</p>`;
       return `<h3>Simbología y nota operativa</h3>${renderTable("PN", "Simbología y nota")}`;
     }
     if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("AMT", "Datos generales")}<h3>Recursos totales</h3>${renderTable("AMT", "Recursos totales")}`;
@@ -494,15 +515,15 @@
     if (!state.filters[route]) state.filters[route] = new Set(filters);
     if (!state.subtab[route]) state.subtab[route] = TABS[route][0];
     const markers = points.map((point, index) => `<button class="map-marker ${state.selectedPoint === index ? "selected" : ""} ${state.relatedPoints.includes(index) ? "related" : ""}" type="button" data-point-index="${index}" data-point-unit="${map.dataKey}" title="${escapeHTML(point.name)}" aria-label="${escapeHTML(point.name)}" style="left:${point.x / map.width * 100}%;top:${point.y / map.height * 100}%;--marker-color:${COLORS[point.color]}"></button>`).join("");
-    const legends = route === "dmgr" ? DMGR_LEGENDS.map(({ id, label, box: [x, y, w, h] }) => `<button class="map-hotspot ${state.mapLegend === id ? "active" : ""}" type="button" data-map-legend="${id}" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" style="left:${x / map.width * 100}%;top:${y / map.height * 100}%;width:${w / map.width * 100}%;height:${h / map.height * 100}%"></button>`).join("") : "";
-    return `<section class="map-layout" data-map-route="${route}"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>${map.title}</h2><p>Evento 8 · Distrito Metropolitano de Quito</p></div><span class="map-badge">MAPA OPERATIVO</span></div>
+    const legends = legendSet(route).map(({ id, label, box: [x, y, w, h] }) => `<button class="map-hotspot ${state.mapLegend === id ? "active" : ""}" type="button" data-map-legend="${id}" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" style="left:${x / map.width * 100}%;top:${y / map.height * 100}%;width:${w / map.width * 100}%;height:${h / map.height * 100}%"></button>`).join("");
+    return `<section class="map-layout" data-map-route="${route}"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>${map.title}</h2><p>${map.event || "Evento 8"} · Distrito Metropolitano de Quito</p></div><span class="map-badge">MAPA OPERATIVO</span></div>
       <div class="map-toolbar"><div class="filter-list">${filters.map(filter => `<button class="filter-chip" type="button" data-filter="${escapeHTML(filter)}" aria-pressed="${state.filters[route].has(filter)}"><span class="filter-swatch" style="--swatch:${COLORS[points.find(point => colorLabel(point, map.dataKey) === filter).color]}"></span>${escapeHTML(filter)}</button>`).join("")}</div>
       ${renderZoomControls(true)}</div>
       <div class="map-viewport" aria-label="Visor interactivo del mapa"><div class="map-content" style="--map-ratio:${map.ratio}"><img class="map-image" src="${map.path}" alt="Mapa operativo ${map.short}"><div class="marker-layer">${legends}${markers}</div></div></div>
-      <div class="map-caption"><span>${route === "dmgr" ? "Clic en la simbología o en los paneles para desplegar información · " : ""}Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${points.length} puntos</span></div></div>
-      <aside class="side-panel"><div class="panel-title-row"><div><h2>${map.short}</h2><p>${map.title}</p></div><span class="unit-flag">EVENTO 8</span></div>
+      <div class="map-caption"><span>${legendSet(route).length ? "Clic en la simbología o en los paneles para desplegar información · " : ""}Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${points.length} puntos</span></div></div>
+      <aside class="side-panel"><div class="panel-title-row"><div><h2>${map.short}</h2><p>${map.title}</p></div><span class="unit-flag">${(map.event || "Evento 8").toUpperCase()}</span></div>
       <div class="kpi-grid">${KPI[route].map(([value, label]) => `<div class="kpi"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`).join("")}</div>
-      <section class="detail-box" aria-live="polite"><p class="detail-label">${route === "dmgr" ? "Detalle" : "Detalle del punto"}</p>${renderDetail(map.dataKey, state.selectedPoint === null ? null : points[state.selectedPoint])}</section>
+      <section class="detail-box" aria-live="polite"><p class="detail-label">${legendSet(route).length ? "Detalle" : "Detalle del punto"}</p>${renderDetail(map.dataKey, state.selectedPoint === null ? null : points[state.selectedPoint])}</section>
       <nav class="data-tabs" aria-label="Datos de ${map.short}">${TABS[route].map(tab => `<button class="data-tab ${state.subtab[route] === tab ? "active" : ""}" type="button" data-subtab="${escapeHTML(tab)}">${escapeHTML(tab)}</button>`).join("")}</nav>
       <section class="data-content">${renderSubtab(map.dataKey, state.subtab[route])}</section></aside></section>`;
   }
@@ -516,10 +537,19 @@
     });
   }
 
+  // El encabezado muestra el evento propio de la pestaña cuando lo tiene (PN: Evento 3).
+  const EVENT_META = document.querySelector(".event-meta");
+  const DEFAULT_EVENT_META = EVENT_META.innerHTML;
+  function updateEventMeta(route) {
+    const map = MAPS[route];
+    EVENT_META.innerHTML = map?.event ? `${escapeHTML(map.event)} <span>·</span> ${escapeHTML(map.date)} <span>·</span> Distrito Metropolitano de Quito` : DEFAULT_EVENT_META;
+  }
+
   function render() {
     const route = location.hash.slice(1).toLowerCase();
     state.route = ROUTES.includes(route) ? route : "ide";
     updateNav(state.route);
+    updateEventMeta(state.route);
     document.title = `ENOS 2026 IDE "SHYRIS" · ${state.route.toUpperCase()}`;
     if (state.route === "ide") { MAIN.innerHTML = renderHome(); bindHome(); }
     else if (MAPS[state.route]) { MAIN.innerHTML = renderMap(state.route); bindMap(state.route); }
@@ -591,11 +621,11 @@
       MAIN.querySelectorAll(".point-list-item").forEach(button => { button.hidden = !button.textContent.toLowerCase().includes(state.search.toLowerCase()); });
     });
     MAIN.querySelectorAll(".map-hotspot").forEach(button => button.addEventListener("click", () => {
-      const legend = DMGR_LEGENDS.find(item => item.id === button.dataset.mapLegend);
+      const legend = legendSet(route).find(item => item.id === button.dataset.mapLegend);
       const closing = state.mapLegend === legend.id;
       state.mapLegend = closing ? null : legend.id;
       state.selectedPoint = null;
-      state.relatedPoints = !closing && legend.related ? pointSet(unit).map((point, index) => point.type === legend.related ? index : -1).filter(index => index >= 0) : [];
+      state.relatedPoints = !closing && legend.related ? pointSet(unit).map((point, index) => [].concat(legend.related).includes(point.type) ? index : -1).filter(index => index >= 0) : [];
       if (!closing) state.subtab[route] = legend.tab;
       refreshMap();
       if (!closing) MAIN.querySelector(".detail-box").scrollIntoView({ behavior: "smooth", block: "nearest" });

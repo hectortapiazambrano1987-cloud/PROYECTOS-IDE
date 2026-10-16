@@ -1,608 +1,95 @@
-// Datos transcritos directamente de las hojas Excel de PN y AMT.
+// Datos transcritos directamente de las hojas Excel de PN (Evento 3) y AMT.
 window.ENOS_DATA = {
   "PN": {
+    // Evento 3 · fuente: PN/Despliegue_Evento3_Zona9_DMQ.xlsx (lámina TERCERA SITUACIÓN).
     "sheets": {
       "Datos generales": [
-        [
-          "DESPLIEGUE OPERATIVO POLICIAL – EVENTO 8",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Campo",
-          "Detalle"
-        ],
-        [
-          "Institución",
-          "Policía Nacional del Ecuador – Zona 9 – DMQ"
-        ],
-        [
-          "Evento",
-          "Despliegue Operativo Policial – Evento 8"
-        ],
-        [
-          "Tipo de evento",
-          "Inundaciones, deslizamientos, colapsos de infraestructura y alteraciones del orden público"
-        ],
-        [
-          "Fecha y hora del evento",
-          "02/11/2028 – 01:00"
-        ],
-        [
-          "Ámbito territorial",
-          "Distrito Metropolitano de Quito (DMQ)"
-        ],
-        [
-          "Jurisdicción",
-          "Policía Nacional – Zona 9"
-        ],
-        [
-          "Talento humano por turno",
-          "60 servidores policiales por turno"
-        ],
-        [
-          "Provincias limítrofes (mapa)",
-          "Pichincha, Imbabura, Manabí, Napo, Cotopaxi"
-        ],
-        [
-          "Referencia en el mapa",
-          "Aeropuerto Mariscal Sucre"
-        ],
-        [
-          "Escala del mapa",
-          "0 – 5 – 10 – 15 km"
-        ]
+        ["DESPLIEGUE OPERATIVO POLICIAL – EVENTO 3", null], [null, null],
+        ["Campo", "Detalle"],
+        ["Institución", "Policía Nacional del Ecuador – Zona 9 – DMQ"],
+        ["Evento", "Despliegue Operativo Policial – Evento 3"],
+        ["Tipo de evento", "Inundaciones, deslizamientos, colapsos de infraestructura y alteraciones del orden público"],
+        ["Fecha y hora del evento", "27/11/2028 – 03:00"],
+        ["Ámbito territorial", "Distrito Metropolitano de Quito (DMQ)"],
+        ["Jurisdicción", "Policía Nacional – Zona 9"],
+        ["Talento humano por turno", "24 servidores policiales"],
+        ["Medios logísticos", "9 unidades (5 patrulleros y 4 motocicletas)"],
+        ["Provincias / zonas en el mapa", "Pichincha, Imbabura, Napo, Cotopaxi, Santo Domingo (Zona 8)"],
+        ["Vía afectada", "E28 (Calacalí – Nanegal)"],
+        ["Escala del mapa", "0 – 5 – 10 – 15 km"]
       ],
       "Distribución personal": [
-        [
-          "DISTRIBUCIÓN DEL PERSONAL",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Componente",
-          "Cantidad"
-        ],
-        [
-          "Mando, coordinación y comunicaciones",
-          4
-        ],
-        [
-          "Inundaciones y evacuaciones",
-          14
-        ],
-        [
-          "Deslizamientos, alviones y taludes",
-          8
-        ],
-        [
-          "Control vial y orden público",
-          8
-        ],
-        [
-          "Alojamientos temporales (1H y 1M por alojamiento)",
-          14
-        ],
-        [
-          "Protección de infraestructura",
-          4
-        ],
-        [
-          "Reserva operativa",
-          6
-        ],
-        [
-          "Coordinación aérea y drones",
-          2
-        ],
-        [
-          "TOTAL",
-          60
-        ]
+        ["DISTRIBUCIÓN DEL PERSONAL (PUNTOS DEL DMQ)", null, null], [null, null, null],
+        ["Punto / Sector", "Tarea", "Servidores"],
+        ["E28 Calacalí", "Control de tránsito", 8],
+        ["Nanegal", "Control de tránsito", 8],
+        ["Quito urbano", "Infraestructura estratégica", 6],
+        ["Redondel Mitad del Mundo", "Control de tránsito y desvíos", 2],
+        ["TOTAL", null, 24]
+      ],
+      "Detalle por punto": [
+        ["DETALLE POR PUNTO DE INTERVENCIÓN (DMQ)", null, null, null], [null, null, null, null],
+        ["Punto / Sector", "Recurso policial", "Cantidad", "Personal"],
+        ["E28 Calacalí", "Personal de tránsito", 4, 4],
+        ["E28 Calacalí", "Patrullero (2 personal)", 1, 2],
+        ["E28 Calacalí", "Motos (1 personal c/u)", 2, 2],
+        ["Nanegal", "Personal de tránsito", 4, 4],
+        ["Nanegal", "Patrullero (2 personal)", 1, 2],
+        ["Nanegal", "Motos (1 personal c/u)", 2, 2],
+        ["Quito urbano", "Equipos de 3 servidores", 2, 6],
+        ["Quito urbano", "Patrulleros", 2, "—"],
+        ["Quito urbano", "Vigilancia y control preventivo", "—", "—"],
+        ["Redondel Mitad del Mundo", "Personal de tránsito", 2, 2],
+        ["Redondel Mitad del Mundo", "Patrullero (2 personal)", 1, "—"],
+        ["TOTAL", null, null, 24]
       ],
       "Medios logísticos": [
-        [
-          "MEDIOS LOGÍSTICOS REQUERIDOS",
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          "Medio",
-          "Cantidad",
-          "Observación"
-        ],
-        [
-          "Patrulleros",
-          15,
-          null
-        ],
-        [
-          "Buses",
-          2,
-          "Evacuación y COP"
-        ],
-        [
-          "Motocicletas",
-          14,
-          null
-        ],
-        [
-          "Helicóptero",
-          1,
-          "Sujeto a disponibilidad y condiciones meteorológicas"
-        ],
-        [
-          "Drones",
-          2,
-          "Sujetos a condiciones de seguridad"
-        ]
+        ["MEDIOS LOGÍSTICOS", null, null], [null, null, null],
+        ["Medio", "Cantidad", "Distribución"],
+        ["Patrulleros", 5, "E28 Calacalí 1 · Nanegal 1 · Quito urbano 2 · Redondel Mitad del Mundo 1"],
+        ["Motocicletas", 4, "E28 Calacalí 2 · Nanegal 2"],
+        ["TOTAL", 9, "Unidades logísticas"]
       ],
-      "Componentes": [
-        [
-          "ZONAS DE INTERVENCIÓN Y PERSONAL ASIGNADO – RESUMEN",
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          "Componente",
-          "Servidores",
-          "Equipos / alojamientos"
-        ],
-        [
-          "Zonas de inundaciones",
-          14,
-          "7 equipos"
-        ],
-        [
-          "Zonas de deslizamientos",
-          8,
-          "4 equipos"
-        ],
-        [
-          "Control vial y orden público",
-          8,
-          "4 equipos"
-        ],
-        [
-          "Alojamientos temporales",
-          14,
-          "7 alojamientos"
-        ],
-        [
-          "Protección de infraestructura",
-          4,
-          "2 equipos"
-        ],
-        [
-          "Reserva operativa",
-          6,
-          null
-        ],
-        [
-          "Coordinación aérea y drones",
-          2,
-          null
-        ],
-        [
-          "TOTAL (sin Mando)",
-          56,
-          null
-        ]
-      ],
-      "Sectores asignados": [
-        [
-          "DETALLE DE SECTORES / TAREAS Y PERSONAL ASIGNADO",
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          "Componente",
-          "Sector / Tarea",
-          "Servidores"
-        ],
-        [
-          "Zonas de inundaciones",
-          "Comité del Pueblo",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "Concepción",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "Cotocollao",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "Centro Histórico",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "Puengasí",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "Guamaní",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "La Argelia",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "La Ecuatoriana",
-          2
-        ],
-        [
-          "Zonas de inundaciones",
-          "La Ferroviaria",
-          2
-        ],
-        [
-          "Zonas de deslizamientos",
-          "Pomasqui",
-          2
-        ],
-        [
-          "Zonas de deslizamientos",
-          "La Capilla (Calderón) y La Bota",
-          2
-        ],
-        [
-          "Zonas de deslizamientos",
-          "La Gasca, La Comuna, Atucucho y San Juan",
-          2
-        ],
-        [
-          "Zonas de deslizamientos",
-          "Monjas (Cuenca del río Monjas) y El Madrigal",
-          2
-        ],
-        [
-          "Control vial y orden público",
-          "Accesos a sectores afectados",
-          2
-        ],
-        [
-          "Control vial y orden público",
-          "Corredores viales del DMQ",
-          2
-        ],
-        [
-          "Control vial y orden público",
-          "Av. Simón Bolívar y Av. Carlos Fortines",
-          2
-        ],
-        [
-          "Control vial y orden público",
-          "Autopista General Rumiñahui (DMQ)",
-          2
-        ],
-        [
-          "Protección de infraestructura",
-          "Infraestructura crítica",
-          2
-        ],
-        [
-          "Protección de infraestructura",
-          "Instalaciones estratégicas y servicios básicos",
-          2
-        ],
-        [
-          "Reserva operativa",
-          "Apoyo inmediato y relevo de incidentes",
-          6
-        ],
-        [
-          "Coordinación aérea y drones",
-          "Enlace operativo",
-          1
-        ],
-        [
-          "Coordinación aérea y drones",
-          "Operación y monitoreo de drones",
-          1
-        ],
-        [
-          "SUMA DE LO LISTADO",
-          null,
-          46
-        ]
-      ],
-      "Alojamientos": [
-        [
-          "ALOJAMIENTOS TEMPORALES (14 servidores – 7 alojamientos)",
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        [
-          "N.º",
-          "Alojamiento temporal",
-          "Personal",
-          "Hombres",
-          "Mujeres"
-        ],
-        [
-          1,
-          "Alojamiento Temporal 1",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          2,
-          "Alojamiento Temporal 2",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          3,
-          "Alojamiento Temporal 3",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          4,
-          "Alojamiento Temporal 4",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          5,
-          "Alojamiento Temporal 5",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          6,
-          "Alojamiento Temporal 6",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          7,
-          "Alojamiento Temporal 7",
-          "1H / 1M",
-          1,
-          1
-        ],
-        [
-          "TOTAL",
-          null,
-          null,
-          7,
-          7
-        ]
+      "Zonas fuera del DMQ": [
+        ["ZONAS FUERA DEL DMQ – COORDINACIÓN", null], [null, null],
+        ["Cantón", "Coordinación"],
+        ["Rumiñahui", "Coordinar con la zona policial competente y COE cantonal."],
+        ["Mejía", "Coordinar con la zona policial competente y COE cantonal."],
+        ["Pedro Vicente Maldonado", "Coordinar con la zona policial competente y COE cantonal / parroquial."],
+        ["Puerto Quito", "Coordinar con la zona policial competente y COE cantonal / parroquial."]
       ],
       "Turnos": [
-        [
-          "TURNOS OPERATIVOS (60 servidores por turno)",
-          null,
-          null
-        ],
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          "Turno",
-          "Horario",
-          "Personal máximo"
-        ],
-        [
-          "Turno 1",
-          "00:00 – 08:00",
-          "60 servidores"
-        ],
-        [
-          "Turno 2",
-          "08:00 – 16:00",
-          "60 servidores"
-        ],
-        [
-          "Turno 3",
-          "16:00 – 00:00",
-          "60 servidores"
-        ]
+        ["TURNOS OPERATIVOS (24 servidores por turno)", null, null], [null, null, null],
+        ["Turno", "Horario", "Personal"],
+        ["Turno 1", "00:00 – 08:00", "24 servidores"],
+        ["Turno 2", "08:00 – 16:00", "24 servidores"],
+        ["Turno 3", "16:00 – 00:00", "24 servidores"]
       ],
       "Puntos del mapa": [
-        [
-          "PUNTOS SEÑALADOS EN EL MAPA",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Punto",
-          "Símbolo en el mapa"
-        ],
-        [
-          "Cotocollao (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Comité del Pueblo (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Concepción (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Centro Histórico (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Puengasí (2)",
-          "Zona de inundación"
-        ],
-        [
-          "La Argelia (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Guamaní (2)",
-          "Zona de inundación"
-        ],
-        [
-          "La Ecuatoriana (2)",
-          "Zona de inundación"
-        ],
-        [
-          "La Ferroviaria (2)",
-          "Zona de inundación"
-        ],
-        [
-          "Pomasqui",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Calderón (La Capilla)",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "La Bota",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Atucucho",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "La Comuna",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "San Juan",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Monjas (Cuenca del río Monjas)",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "El Madrigal",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Av. Carlos Fortines",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Parque Cuscungo",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Prolongación Av. Simón Bolívar",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "Autopista General Rumiñahui (Corredor dentro del DMQ)",
-          "Deslizamiento / aluvión"
-        ],
-        [
-          "7 puntos sin nombre",
-          "Alojamientos temporales"
-        ],
-        [
-          "Aeropuerto Mariscal Sucre",
-          "Referencia"
-        ]
+        ["PUNTOS SEÑALADOS EN EL MAPA", null, null], [null, null, null],
+        ["Punto", "Símbolo en el mapa", "Coordenadas aprox. (lat, lon)"],
+        ["E28 Calacalí", "Control de tránsito", "-0.0003, -78.5133"],
+        ["Nanegal", "Control de tránsito", "0.1290, -78.6680"],
+        ["Quito urbano", "Infraestructura estratégica", "-0.2200, -78.5125"],
+        ["Redondel Mitad del Mundo", "Control de tránsito y desvíos", "-0.0060, -78.4520"],
+        ["La Independencia", "Referencia (vía E28)", "-0.0200, -78.5000"],
+        ["Zona de afectación E28", "Incidente", "0.0850, -78.6000"],
+        ["Rumiñahui", "Coordinación (fuera del DMQ)", "-0.3126, -78.4453"],
+        ["Mejía", "Coordinación (fuera del DMQ)", "-0.5104, -78.5672"],
+        ["Pedro Vicente Maldonado", "Coordinación (fuera del DMQ)", "0.0861, -79.0510"],
+        ["Puerto Quito", "Coordinación (fuera del DMQ)", "0.1236, -79.2531"]
       ],
       "Simbología y nota": [
-        [
-          "SIMBOLOGÍA Y NOTA",
-          null
-        ],
-        [
-          null,
-          null
-        ],
-        [
-          "Elemento",
-          "Descripción"
-        ],
-        [
-          "Círculo rojo",
-          "Zonas de inundaciones"
-        ],
-        [
-          "Triángulo amarillo",
-          "Deslizamientos / aluviones"
-        ],
-        [
-          "Ícono morado de casa",
-          "Alojamientos temporales (7)"
-        ],
-        [
-          "Línea amarilla",
-          "Vías principales"
-        ],
-        [
-          "Línea blanca",
-          "Vías secundarias"
-        ],
-        [
-          "Línea celeste",
-          "Ríos y quebradas principales"
-        ],
-        [
-          "Línea discontinua",
-          "Límite parroquial (DMQ)"
-        ],
-        [
-          "Contorno blanco",
-          "Límite del DMQ"
-        ],
-        [
-          "NOTA",
-          "El evento registrado en los cantones Rumiñahui y Mejía, así como en el noroccidente de la provincia de Pichincha, corresponde a las Zonas 2 y 1, respectivamente, los cuales fueron comunicados inmediatamente a las unidades competentes, a fin de que adopten las acciones operativas correspondientes, conforme a sus competencias y territorios de responsabilidad."
-        ]
+        ["SIMBOLOGÍA Y NOTA", null], [null, null],
+        ["Elemento", "Descripción"],
+        ["Triángulo rojo", "Zonas de afectación / incidentes"],
+        ["Línea roja discontinua", "Vía con afectación / cierre (E28)"],
+        ["Línea amarilla", "Ejes viales principales"],
+        ["Línea celeste", "Ríos y quebradas principales"],
+        ["Contorno blanco", "Límite del DMQ (Zona 9)"],
+        ["Contorno amarillo", "Límite cantonal"],
+        ["Contorno amarillo discontinuo", "Otros cantones (zona correspondiente)"],
+        ["NOTA", "Rumiñahui, Mejía, Pedro Vicente Maldonado y Puerto Quito se coordinan con las zonas policiales correspondientes y los COE cantonales y parroquiales."]
       ]
     }
   },
