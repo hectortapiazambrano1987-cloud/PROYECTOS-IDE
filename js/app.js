@@ -1,0 +1,675 @@
+/* Interfaz compartida para las unidades operativas PN y AMT. */
+(() => {
+  "use strict";
+
+  const DATA = window.ENOS_DATA;
+  const IDE = window.IDE_DATA;
+  const PLAN = window.PLAN_DATA;
+  const BOMB = window.BOMBEROS_DATA;
+  const MAIN = document.querySelector("#app-main");
+  const NAV_LINKS = [...document.querySelectorAll("[data-route]")];
+  const MAPS = {
+    pn: { path: "PN/PN MAPA MEJORADO.png", width: 1536, height: 1024, title: "Policía Nacional", short: "PN", dataKey: "PN", ratio: 1.5 },
+    amt: { path: "PN/AMT MAPA MEJORADO.png", width: 1672, height: 941, title: "Agencia Metropolitana de Tránsito", short: "AMT", dataKey: "AMT", ratio: 1672 / 941 },
+    dmgr: { path: "MDMQ/MAPA MDMQ.jpeg", width: 1536, height: 1024, title: "Secretaría de Seguridad y Gestión de Riesgos", short: "DMGR", dataKey: "DMGR", ratio: 1.5 }
+  };
+  const ROUTES = ["ide", "dmgr", "pn", "bomberos", "amt"];
+  const TABS = {
+    dmgr: ["Resumen", "Acciones", "Inundaciones", "Por AZ", "Movimientos", "Recursos", "Puntos", "Simbología"],
+    pn: ["Resumen", "Personal", "Sectores", "Logística", "Alojamientos", "Turnos", "Puntos", "Simbología + Nota"],
+    amt: ["Resumen", "Recursos", "Distribución", "Actividades", "Puntos", "Simbología"]
+  };
+  const COLORS = {
+    red: "#e53935", amber: "#f5a623", purple: "#8e44ad", blue: "#1e88e5",
+    orange: "#f57c00", green: "#2e9e4f", yellow: "#f2c94c", white: "#ffffff"
+  };
+  // Coordenadas de los puntos indicadas sobre las dimensiones originales de cada mapa.
+  const PN_POINTS = [
+    { name: "Cotocollao", x: 700, y: 323, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Cotocollao"] },
+    { name: "Comité del Pueblo", x: 727, y: 384, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Comité del Pueblo"] },
+    { name: "Concepción", x: 727, y: 420, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Concepción"] },
+    { name: "Centro Histórico", x: 750, y: 490, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Centro Histórico"] },
+    { name: "Puengasí", x: 630, y: 571, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Puengasí"] },
+    { name: "La Argelia", x: 606, y: 605, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Argelia"] },
+    { name: "Guamaní", x: 603, y: 649, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["Guamaní"] },
+    { name: "La Ecuatoriana", x: 640, y: 683, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Ecuatoriana"] },
+    { name: "La Ferroviaria", x: 592, y: 714, type: "Inundación", color: "red", component: "Zonas de inundaciones", sectors: ["La Ferroviaria"] },
+    { name: "Pomasqui", x: 878, y: 268, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Pomasqui"] },
+    { name: "Calderón (La Capilla)", x: 884, y: 318, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Capilla (Calderón) y La Bota"] },
+    { name: "La Bota", x: 886, y: 369, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Capilla (Calderón) y La Bota"] },
+    { name: "Atucucho", x: 540, y: 376, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
+    { name: "La Comuna", x: 531, y: 406, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
+    { name: "San Juan", x: 567, y: 436, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["La Gasca, La Comuna, Atucucho y San Juan"] },
+    { name: "Monjas", x: 511, y: 481, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Monjas (Cuenca del río Monjas) y El Madrigal"] },
+    { name: "El Madrigal", x: 537, y: 529, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Monjas (Cuenca del río Monjas) y El Madrigal"] },
+    { name: "Av. Carlos Fortines", x: 828, y: 551, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Av. Simón Bolívar y Av. Carlos Fortines"] },
+    { name: "Parque Cuscungo", x: 802, y: 598, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: [] },
+    { name: "Prolongación Av. Simón Bolívar", x: 728, y: 640, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Av. Simón Bolívar y Av. Carlos Fortines"] },
+    { name: "Autopista General Rumiñahui", x: 862, y: 793, type: "Deslizamiento", color: "amber", component: "Zonas de deslizamientos", sectors: ["Autopista General Rumiñahui (DMQ)"] },
+    ...[[821, 268], [769, 343], [793, 459], [676, 544], [760, 557], [651, 632], [597, 686]].map(([x, y], index) => ({
+      name: `Alojamiento temporal ${index + 1}`, x, y, type: "Alojamiento temporal", color: "purple", component: "Alojamientos temporales", sectors: [], accommodation: true
+    })),
+    { name: "Aeropuerto Mariscal Sucre", x: 805, y: 758, type: "Referencia", color: "blue", component: "Referencia", sectors: [] }
+  ];
+  const AMT_POINTS = [
+    { name: "Vía Quito–Cayambe (peaje)", x: 944, y: 193, color: "yellow", rows: [15] },
+    { name: "Pomasquí", x: 958, y: 238, color: "blue", rows: [10] },
+    { name: "Calderón (La Capilla)", x: 966, y: 282, color: "purple", rows: [12] },
+    { name: "La Bota", x: 981, y: 320, color: "blue", rows: [12] },
+    { name: "Cotocollao", x: 835, y: 305, color: "red", rows: [4] },
+    { name: "Atucucho, La Comuna, San Juan", x: 683, y: 333, color: "blue", rows: [13] },
+    { name: "Comité del Pueblo", x: 836, y: 355, color: "red", rows: [2] },
+    { name: "Concepción", x: 862, y: 394, color: "red", rows: [3] },
+    { name: "Monjas (Cuscungo / El Madrigal)", x: 604, y: 437, color: "orange", rows: [10, 14] },
+    { name: "DMQ (Centro Histórico)", x: 808, y: 430, color: "white", rows: [1] },
+    { name: "Av. Carlos Fortines (Prolongación Simón Bolívar)", x: 917, y: 458, color: "yellow", rows: [11] },
+    { name: "El Madrigal", x: 650, y: 476, color: "orange", rows: [14] },
+    { name: "Puengasí", x: 828, y: 489, color: "purple", rows: [5] },
+    { name: "La Argelia", x: 727, y: 510, color: "red", rows: [7] },
+    { name: "Parque Cuscungo", x: 927, y: 515, color: "blue", rows: [14] },
+    { name: "La Ecuatoriana", x: 864, y: 543, color: "green", rows: [8] },
+    { name: "Guamaní", x: 724, y: 566, color: "green", rows: [6] },
+    { name: "La Ferroviaria", x: 759, y: 581, color: "red", rows: [9] },
+    { name: "La Capilla (Calderón) y La Bota", x: 695, y: 625, color: "purple", rows: [12] },
+    { name: "Autopista General Rumiñahui", x: 942, y: 668, color: "yellow", rows: [14] }
+  ];
+  // floodRow: N.º de la hoja "Inundaciones en barrios"; rows: N.º de la hoja "Movimientos en masa".
+  const DMGR_POINTS = [
+    ...[["Cotocollao", 745, 305, 3], ["Comité del Pueblo", 750, 366, 1], ["Concepción", 755, 398, 2], ["Centro Histórico", 780, 462, 4], ["Puengasí", 684, 532, 5], ["La Argelia", 657, 565, 8], ["Guamaní", 650, 598, 6], ["La Ecuatoriana", 672, 633, 7], ["La Ferroviaria", 634, 661, 9]]
+      .map(([name, x, y, floodRow]) => ({ name, x, y, floodRow, type: "Zonas de inundaciones", color: "red" })),
+    ...[["Pomasqui", 893, 249, [5]], ["Calderón (La Capilla)", 895, 302, [2]], ["La Bota", 896, 345, [3]], ["Atucucho", 598, 347, [4]], ["La Comuna", 591, 380, [12]], ["San Juan", 612, 410, [10]], ["Monjas (Cuenca del río Monjas)", 570, 443, [6, 5]], ["El Madrigal", 591, 494, [7]], ["Av. Carlos Fortines", 854, 516, [1]], ["Parque Cuscungo", 820, 556, [8]], ["Prolongación Av. Simón Bolívar", 757, 594, [1]], ["Autopista General Rumiñahui", 852, 737, [9]]]
+      .map(([name, x, y, rows]) => ({ name, x, y, rows, type: "Movimientos en masa", color: "amber" }))
+  ];
+  // Zonas clicables de la leyenda y paneles del mapa DMGR (x, y, ancho, alto en píxeles de la imagen).
+  const DMGR_LEGENDS = [
+    { id: "inundaciones", label: "Zonas de inundaciones", box: [435, 706, 205, 21], tab: "Inundaciones", related: "Zonas de inundaciones" },
+    { id: "movimientos", label: "Movimientos en masa", box: [435, 727, 205, 21], tab: "Movimientos", related: "Movimientos en masa" },
+    { id: "vias", label: "Vías principales", box: [435, 748, 205, 20], tab: "Simbología" },
+    { id: "rios", label: "Ríos y quebradas principales", box: [435, 768, 205, 21], tab: "Simbología" },
+    { id: "parroquial", label: "Límite parroquial (DMQ)", box: [435, 789, 205, 21], tab: "Simbología" },
+    { id: "limite", label: "Límite del DMQ", box: [435, 810, 205, 17], tab: "Simbología" },
+    ...[[155, 80], [240, 66], [310, 92], [405, 96], [505, 86], [595, 96], [695, 110]].map(([y, h], index) => ({ id: `accion-${index + 1}`, label: `Acción principal ${index + 1}`, box: [15, y, 393, h], tab: "Acciones", action: String(index + 1) })),
+    { id: "panel-inundaciones", label: "Zonas de inundaciones en barrios", box: [1043, 118, 483, 338], tab: "Inundaciones", related: "Zonas de inundaciones" },
+    { id: "panel-movimientos", label: "Zonas de movimientos en masa", box: [1043, 462, 483, 350], tab: "Movimientos", related: "Movimientos en masa" },
+    { id: "recursos", label: "Recursos e instituciones desplegadas", box: [15, 828, 1511, 178], tab: "Recursos" }
+  ];
+  const KPI = {
+    dmgr: [["1.296", "personas afectadas"], ["324", "familias afectadas"], ["684", "personal servidores"], ["354", "recursos totales"]],
+    pn: [["60", "servidores por turno"], ["3", "turnos operativos"], ["15", "patrulleros"], ["14", "motocicletas"]],
+    amt: [["1.333", "agentes totales"], ["187", "motos · aprox."], ["47", "patrulleros · aprox."], ["15", "puntos de emergencia"]]
+  };
+  const state = { route: "ide", subtab: {}, filters: {}, circles: true, zoom: 1, panX: 0, panY: 0, selectedPoint: null, relatedPoints: [], search: "", mapLegend: null, bombView: null, ideSection: "situacion", planHover: null, planPin: null, planOpen: false, planTab: "totales", planSort: null, planSearch: "", planExpanded: null };
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+  }
+
+  function sheetRows(unit, sheetName) {
+    const sheet = DATA[unit].sheets[sheetName] || [];
+    return { headers: sheet[2] || [], rows: sheet.slice(3).filter(row => row.some(value => value !== null && value !== "")) };
+  }
+
+  function renderTable(unit, sheetName, options = {}) {
+    const { headers, rows } = sheetRows(unit, sheetName);
+    if (!rows.length) return '<p class="map-empty-state">Sin registros en esta hoja.</p>';
+    const body = rows.map(row => {
+      const isTotal = String(row[0] || row[1] || "").toLowerCase().includes("total") || String(row[1] || "").toLowerCase().includes("subtotal");
+      let relation = "";
+      if (options.kind === "pn-sectors") relation = escapeHTML(row[1] || "");
+      if (["amt-distribution", "dmgr-flood", "dmgr-mass"].includes(options.kind)) relation = escapeHTML(row[0] || "");
+      return `<tr class="${options.kind ? "clickable" : ""} ${isTotal ? "total-row" : ""}" ${options.kind ? `data-row-kind="${options.kind}" data-row-value="${relation}"` : ""}>${row.map(value => `<td>${escapeHTML(value)}</td>`).join("")}</tr>`;
+    }).join("");
+    return `<div class="table-wrap"><table><thead><tr>${headers.map(value => `<th>${escapeHTML(value)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>`;
+  }
+
+  const NUMBER = new Intl.NumberFormat("es-EC");
+  const PLAN_TABS = [["totales", "Resultados totales"], ["operaciones", "Operaciones"], ["semanal", "Resumen semanal"]];
+  let planGrid = null;
+
+  // Grupo del plan bajo una posición relativa del mapa (0–1), según la cuadrícula precalculada.
+  function planGroupAt(fx, fy) {
+    if (!planGrid) {
+      const [dims, rows] = PLAN.MAP.grid.split("#");
+      const [width, height] = dims.split("x").map(Number);
+      const cells = new Uint8Array(width * height);
+      rows.split("|").forEach((row, y) => {
+        let x = 0;
+        row.split(",").forEach(run => { const value = Number(run[0]), count = Number(run.slice(1)); cells.fill(value, y * width + x, y * width + x + count); x += count; });
+      });
+      planGrid = { width, height, cells };
+    }
+    if (fx < 0 || fy < 0 || fx >= 1 || fy >= 1) return 0;
+    const x = Math.floor(fx * PLAN.MAP.width / 8), y = Math.floor(fy * PLAN.MAP.height / 8);
+    return x < planGrid.width && y < planGrid.height ? planGrid.cells[y * planGrid.width + x] : 0;
+  }
+
+  function renderHome() {
+    const { MAP, GROUPS, OPERATIONS, WEEKLY } = PLAN;
+    const overlays = Object.keys(GROUPS).map(id => `<img class="plan-overlay" data-group-overlay="${id}" src="IDE/sectores/grupo-${id}.png" alt="">`).join("");
+    const markers = OPERATIONS.map(op => `<button class="map-marker plan-op" type="button" data-op="${op.n}" title="Operación ${op.n}: ${escapeHTML(op.place)}" aria-label="Operación ${op.n}: ${escapeHTML(op.place)}" style="left:${op.x / MAP.width * 100}%;top:${op.y / MAP.height * 100}%;--marker-color:#e53935"></button>`).join("");
+    const chips = Object.entries(GROUPS).map(([id, group]) => `<button class="filter-chip plan-chip" type="button" data-group="${id}" aria-pressed="false"><span class="filter-swatch" style="--swatch:${group.color}"></span>${group.name}</button>`).join("");
+    const kpis = [[NUMBER.format(WEEKLY[1][1]), "operaciones en la semana"], [NUMBER.format(WEEKLY[2][1]), "personal empleado"], [OPERATIONS.length, "operaciones con resultados"], [NUMBER.format(PLAN.RESULTS.find(r => r.name === "Aprehendidos").total), "aprehendidos"]];
+    return `<section class="map-layout plan-layout"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>Plan Defensa de Quito</h2><p>Pase el mouse sobre cada sector de color · clic para fijarlo</p></div><button class="plan-totals-button" type="button" aria-expanded="${state.planOpen}">▦ Resultados totales</button></div>
+      <div class="map-toolbar"><div class="filter-list">${chips}</div>${renderZoomControls(false)}</div>
+      <div class="map-viewport" aria-label="Visor interactivo del mapa"><div class="map-content" style="--map-ratio:${MAP.width / MAP.height}"><img class="map-image" src="${MAP.path}" alt="Plan Defensa de Quito: sectores por grupos"><div class="plan-overlays">${overlays}</div><div class="marker-layer">${markers}</div></div></div>
+      <div class="map-caption"><span>Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${OPERATIONS.length} operaciones marcadas</span></div></div>
+      <aside class="side-panel"><div class="panel-title-row"><div><h2>Resultados</h2><p>Operaciones por sector</p></div><span class="unit-flag">SEMANA</span></div>
+      <div class="kpi-grid">${kpis.map(([value, label]) => `<div class="kpi"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`).join("")}</div>
+      <section class="detail-box plan-detail" aria-live="polite">${renderPlanDetail(state.planPin)}</section></aside></section>
+      <section class="page-shell plan-results" ${state.planOpen ? "" : "hidden"}><div class="section-heading"><h2>Resultados del Plan Defensa de Quito</h2><p>Fuente: Resultados_Plan_Defensa_Quito_por_Sector.xlsx</p></div>
+      <nav class="data-tabs ide-tabs" aria-label="Resultados">${PLAN_TABS.map(([id, label]) => `<button class="data-tab ${state.planTab === id ? "active" : ""}" type="button" data-plan-tab="${id}">${label}</button>`).join("")}</nav>
+      <section class="plan-tab-content">${renderPlanTab()}</section></section>
+      <section class="page-shell ide-page"><div class="section-heading"><h2>Información de la carpeta IDE</h2><p>Situación N.º 3, concepto de la operación y láminas del Evento 8.</p></div>
+      <nav class="data-tabs ide-tabs" aria-label="Información IDE">${IDE.SECTIONS.map(section => `<button class="data-tab ${state.ideSection === section.id ? "active" : ""}" type="button" data-ide-section="${section.id}">${escapeHTML(section.label)}</button>`).join("")}</nav>
+      <section class="ide-section">${renderIdeSection(state.ideSection)}</section></section>`;
+  }
+
+  // Resultados con cantidad > 0 de los sectores indicados, con barra de participación sobre el total.
+  function renderSectorResults(sectors) {
+    const rows = PLAN.RESULTS.map(result => ({ ...result, value: sectors.reduce((sum, index) => sum + result.bySector[index], 0) })).filter(row => row.value > 0);
+    return `<div class="plan-result-list">${rows.map(row => `<div class="plan-result-row"><div class="plan-result-top"><span>${escapeHTML(row.name)}</span><strong>${NUMBER.format(row.value)} <small>${escapeHTML(row.unit)}</small></strong></div><div class="plan-bar" title="${Math.round(row.value / row.total * 100)} % del total (${NUMBER.format(row.total)})"><span style="width:${Math.max(2, row.value / row.total * 100)}%"></span></div></div>`).join("")}</div><p class="detail-meta plan-note">Barra: participación sobre el resultado total. ${escapeHTML(PLAN.ESTIMATE_NOTE)}</p>`;
+  }
+
+  function renderPlanDetail(focus) {
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    if (!focus) {
+      const summary = Object.entries(PLAN.GROUPS).map(([id, group]) => { const ops = PLAN.OPERATIONS.filter(op => op.group === Number(id)).length; return `<button class="plan-group-row" type="button" data-group="${id}"><span class="filter-swatch" style="--swatch:${group.color}"></span><span>${group.name}</span><span>${ops ? `${ops} operación${ops > 1 ? "es" : ""}` : "sin resultados"}</span></button>`; }).join("");
+      return `<p class="detail-label">Sectores del plan</p><p class="detail-empty">Pase el mouse sobre un sector de color del mapa o un punto rojo para ver sus resultados.</p><div class="plan-group-list">${summary}</div><p class="detail-meta plan-note">${escapeHTML(PLAN.GROUP_1)}</p>`;
+    }
+    const [kind, id] = focus.split(":");
+    if (kind === "g") {
+      const group = PLAN.GROUPS[id];
+      const ops = PLAN.OPERATIONS.filter(op => op.group === Number(id));
+      const body = group.sectors.length
+        ? `<p class="detail-label plan-sub">Operaciones con resultados</p>${ops.map(op => `<button class="plan-op-link" type="button" data-op="${op.n}"><b>${op.n}</b> ${escapeHTML(PLAN.SECTORS[op.sector])}</button>`).join("")}<p class="detail-label plan-sub">Resultados del grupo</p>${renderSectorResults(group.sectors)}`
+        : '<p class="detail-empty plan-sub">Sin operaciones con resultados registradas para este grupo.</p>';
+      return `<div class="plan-detail-head" style="--group-color:${group.color}"><span></span><h3 class="detail-name">${group.name}</h3></div>${meta("Parroquias", group.parishes)}${body}`;
+    }
+    const op = PLAN.OPERATIONS.find(item => item.n === Number(id));
+    const group = PLAN.GROUPS[op.group];
+    return `<div class="plan-detail-head" style="--group-color:${group.color}"><span>${op.n}</span><h3 class="detail-name">${escapeHTML(PLAN.SECTORS[op.sector])}</h3></div>${meta("Rótulo", op.label)}${meta("Sector del mapa", op.place)}${meta("Grupo", `${group.name} – ${op.limit}`)}${meta("Fecha y hora (foto)", op.date)}${meta("Coordenadas", op.lat === "-" ? "No visibles" : `${op.lat}, ${op.lon}`)}${meta("La foto muestra", op.photo)}<p class="detail-label plan-sub">Resultados de la operación</p>${renderSectorResults([op.sector])}`;
+  }
+
+  function renderPlanTab() {
+    if (state.planTab === "operaciones") {
+      return `<div class="plan-op-grid">${PLAN.OPERATIONS.map(op => { const group = PLAN.GROUPS[op.group]; const main = PLAN.RESULTS.map(r => [r, r.bySector[op.sector]]).filter(([, v]) => v > 0).sort((a, b) => b[1] / b[0].total - a[1] / a[0].total).slice(0, 3); return `<article class="plan-op-card" style="--group-color:${group.color}"><header><span>${op.n}</span><div><h3>${escapeHTML(PLAN.SECTORS[op.sector])}</h3><p>${escapeHTML(op.place)} · ${group.name}</p></div></header><p><strong>Fecha y hora:</strong> ${escapeHTML(op.date)}</p><p><strong>Coordenadas:</strong> ${op.lat === "-" ? "No visibles" : `${escapeHTML(op.lat)}, ${escapeHTML(op.lon)}`}</p><p><strong>La foto muestra:</strong> ${escapeHTML(op.photo)}</p><div class="ide-chips">${main.map(([r, v]) => `<span>${escapeHTML(r.name)}: ${NUMBER.format(v)} ${escapeHTML(r.unit)}</span>`).join("")}</div><button class="plan-locate" type="button" data-locate="${op.n}">⌖ Ver en el mapa</button></article>`; }).join("")}</div>`;
+    }
+    if (state.planTab === "semanal") {
+      return `<div class="plan-week-grid">${PLAN.WEEKLY.map(([label, value, detail], index) => `<${index === PLAN.WEEKLY.length - 1 ? 'button type="button" data-plan-tab="operaciones"' : "div"} class="plan-week-tile ${value === 0 ? "zero" : ""}"><strong>${NUMBER.format(value)}</strong><span>${escapeHTML(label)}</span>${detail ? `<small>${escapeHTML(detail)}</small>` : ""}</${index === PLAN.WEEKLY.length - 1 ? "button" : "div"}>`).join("")}</div><p class="table-note">Cifras tal como aparecen en la diapositiva. Seleccione el último indicador para ver las operaciones.</p>`;
+    }
+    const sort = state.planSort;
+    const query = state.planSearch.trim().toLowerCase();
+    let rows = PLAN.RESULTS.map((result, index) => ({ ...result, index })).filter(row => !query || row.name.toLowerCase().includes(query) || row.unit.toLowerCase().includes(query));
+    if (sort) rows = [...rows].sort((a, b) => (sort.key === "total" ? a.total - b.total : a[sort.key].localeCompare(b[sort.key], "es")) * sort.dir);
+    const header = (key, label) => `<th><button class="plan-sort" type="button" data-sort="${key}">${label} ${sort?.key === key ? (sort.dir > 0 ? "▲" : "▼") : "↕"}</button></th>`;
+    const body = rows.map(row => {
+      const open = state.planExpanded === row.index;
+      const breakdown = open ? `<tr class="plan-breakdown"><td colspan="3">${PLAN.SECTORS.map((sector, i) => `<div class="plan-bar-row"><span>${escapeHTML(sector)}</span><div class="plan-bar"><span style="width:${row.bySector[i] / row.total * 100}%"></span></div><strong>${NUMBER.format(row.bySector[i])}</strong></div>`).join("")}<p class="table-note">${escapeHTML(PLAN.ESTIMATE_NOTE)}</p></td></tr>` : "";
+      return `<tr class="clickable ${open ? "row-selected" : ""}" data-result="${row.index}" aria-expanded="${open}"><td>${open ? "▾" : "▸"} ${escapeHTML(row.name)}</td><td>${escapeHTML(row.unit)}</td><td class="plan-total">${NUMBER.format(row.total)}</td></tr>${breakdown}`;
+    }).join("") || '<tr><td colspan="3">Sin coincidencias.</td></tr>';
+    return `<input class="search-input plan-search" type="search" placeholder="Buscar resultado o unidad…" aria-label="Buscar resultado" value="${escapeHTML(state.planSearch)}"><div class="table-wrap"><table class="plan-table"><thead><tr>${header("name", "Resultado")}${header("unit", "Unidad")}${header("total", "Resultado total")}</tr></thead><tbody>${body}</tbody></table></div><p class="table-note">Seleccione una fila para ver su distribución por sector. Pase el mouse sobre una fila para iluminar en el mapa los grupos donde se obtuvo.</p>`;
+  }
+
+  function renderIdeSection(id) {
+    const section = IDE.SECTIONS.find(item => item.id === id) || IDE.SECTIONS[0];
+    const images = [section.image, section.extraImage, section.thirdImage].filter(Boolean);
+    return `<p class="eyebrow">${escapeHTML(section.source)}</p>${section.html}
+      <details class="ide-originals"><summary>Ver lámina${images.length > 1 ? "s" : ""} original${images.length > 1 ? "es" : ""}</summary><div class="ide-original-grid">${images.map(src => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="Lámina original: ${escapeHTML(section.label)}" loading="lazy"></a>`).join("")}</div></details>`;
+  }
+
+  function bindHome() {
+    bindPanZoom();
+    const viewport = MAIN.querySelector(".map-viewport");
+    const image = MAIN.querySelector(".map-image");
+    const detail = MAIN.querySelector(".plan-detail");
+    const results = MAIN.querySelector(".plan-results");
+    const tabContent = MAIN.querySelector(".plan-tab-content");
+    let shownFocus;
+
+    const groupOf = focus => !focus ? 0 : focus.startsWith("g:") ? Number(focus.slice(2)) : PLAN.OPERATIONS.find(op => op.n === Number(focus.slice(3))).group;
+    const showOverlays = ids => MAIN.querySelectorAll("[data-group-overlay]").forEach(img => img.classList.toggle("active", ids.includes(Number(img.dataset.groupOverlay))));
+    // Enfoque visible: lo que está bajo el mouse o, si no hay nada, lo que el usuario fijó con un clic.
+    const refresh = () => {
+      const focus = state.planHover || state.planPin;
+      showOverlays(focus ? [groupOf(focus)] : []);
+      MAIN.querySelectorAll(".plan-op").forEach(marker => marker.classList.toggle("selected", focus === `op:${marker.dataset.op}`));
+      MAIN.querySelectorAll(".plan-chip").forEach(chip => chip.setAttribute("aria-pressed", String(state.planPin === `g:${chip.dataset.group}`)));
+      viewport.classList.toggle("plan-hovering", Boolean(state.planHover));
+      if (focus !== shownFocus) { detail.innerHTML = renderPlanDetail(focus); shownFocus = focus; }
+    };
+    const hover = focus => { if (state.planHover !== focus) { state.planHover = focus; refresh(); } };
+    const pin = focus => { state.planPin = state.planPin === focus ? null : focus; refresh(); };
+    const groupUnder = event => { const r = image.getBoundingClientRect(); return planGroupAt((event.clientX - r.left) / r.width, (event.clientY - r.top) / r.height); };
+
+    let down = null;
+    viewport.addEventListener("pointerdown", event => { down = { x: event.clientX, y: event.clientY }; });
+    viewport.addEventListener("pointermove", event => {
+      if (event.target.closest(".plan-op")) return;
+      const group = groupUnder(event);
+      hover(group ? `g:${group}` : null);
+    });
+    viewport.addEventListener("pointerleave", () => hover(null));
+    viewport.addEventListener("click", event => {
+      if (event.target.closest(".plan-op") || !down || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 5) return;
+      const group = groupUnder(event);
+      if (group) pin(`g:${group}`);
+    });
+    MAIN.querySelectorAll(".plan-op").forEach(marker => {
+      marker.addEventListener("mouseenter", () => hover(`op:${marker.dataset.op}`));
+      marker.addEventListener("mouseleave", () => hover(null));
+      marker.addEventListener("click", () => pin(`op:${marker.dataset.op}`));
+    });
+    MAIN.querySelectorAll(".plan-chip").forEach(chip => {
+      chip.addEventListener("mouseenter", () => hover(`g:${chip.dataset.group}`));
+      chip.addEventListener("mouseleave", () => hover(null));
+      chip.addEventListener("click", () => pin(`g:${chip.dataset.group}`));
+    });
+    detail.addEventListener("click", event => {
+      const target = event.target.closest("[data-group], [data-op]");
+      if (!target) return;
+      state.planHover = null;
+      pin(target.dataset.group ? `g:${target.dataset.group}` : `op:${target.dataset.op}`);
+    });
+
+    MAIN.querySelector(".plan-totals-button").addEventListener("click", event => {
+      state.planOpen = !state.planOpen;
+      results.hidden = !state.planOpen;
+      event.currentTarget.setAttribute("aria-expanded", String(state.planOpen));
+      if (state.planOpen) results.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    const setTab = tab => {
+      state.planTab = tab;
+      MAIN.querySelectorAll(".plan-results .data-tab").forEach(button => button.classList.toggle("active", button.dataset.planTab === tab));
+      tabContent.innerHTML = renderPlanTab();
+    };
+    MAIN.querySelectorAll(".plan-results .data-tab").forEach(button => button.addEventListener("click", () => setTab(button.dataset.planTab)));
+    // Delegación: el contenido de la pestaña se vuelve a dibujar con cada cambio.
+    tabContent.addEventListener("click", event => {
+      const sortButton = event.target.closest("[data-sort]");
+      const row = event.target.closest("[data-result]");
+      const locate = event.target.closest("[data-locate]");
+      const tile = event.target.closest("[data-plan-tab]");
+      if (sortButton) {
+        // Cada clic en el encabezado alterna: primer orden → orden inverso → orden original.
+        const key = sortButton.dataset.sort;
+        const first = key === "total" ? -1 : 1;
+        state.planSort = state.planSort?.key !== key ? { key, dir: first } : state.planSort.dir === first ? { key, dir: -first } : null;
+      } else if (row) {
+        state.planExpanded = state.planExpanded === Number(row.dataset.result) ? null : Number(row.dataset.result);
+      } else if (locate) {
+        state.planHover = null;
+        state.planPin = `op:${locate.dataset.locate}`;
+        refresh();
+        viewport.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      } else if (tile) {
+        setTab(tile.dataset.planTab);
+        return;
+      } else return;
+      tabContent.innerHTML = renderPlanTab();
+    });
+    tabContent.addEventListener("input", event => {
+      if (!event.target.classList.contains("plan-search")) return;
+      state.planSearch = event.target.value;
+      const position = event.target.selectionStart;
+      tabContent.innerHTML = renderPlanTab();
+      const search = tabContent.querySelector(".plan-search");
+      search.focus();
+      search.setSelectionRange(position, position);
+    });
+    // Al pasar sobre una fila de resultados se iluminan los grupos donde se obtuvo ese resultado.
+    tabContent.addEventListener("mouseover", event => {
+      const row = event.target.closest("[data-result]");
+      if (!row) return;
+      const result = PLAN.RESULTS[Number(row.dataset.result)];
+      showOverlays(Object.entries(PLAN.GROUPS).filter(([, group]) => group.sectors.some(index => result.bySector[index] > 0)).map(([id]) => Number(id)));
+    });
+    tabContent.addEventListener("mouseleave", refresh);
+    refresh();
+
+    MAIN.querySelectorAll("[data-ide-section]").forEach(button => button.addEventListener("click", () => {
+      state.ideSection = button.dataset.ideSection;
+      MAIN.querySelectorAll("[data-ide-section]").forEach(tab => tab.classList.toggle("active", tab === button));
+      MAIN.querySelector(".ide-section").innerHTML = renderIdeSection(state.ideSection);
+    }));
+  }
+
+  const BOMB_ICONS = {
+    recursos: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 30V16h22v14M26 20h9l7 8v6H26zM4 30h22v4H4z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="12" cy="36" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="34" cy="36" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M8 12h14" stroke="currentColor" stroke-width="2.5"/></svg>',
+    estaciones: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 20 24 8l18 12M10 18v22h28V18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 40V28h14v12M17 34h14" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="20" r="2.5" fill="currentColor"/></svg>'
+  };
+
+  function renderBomberos() {
+    const { WIDTH, HEIGHT, VIEWS } = BOMB;
+    const switcher = `<div class="bomb-switch">${Object.entries(VIEWS).map(([id, view]) => `<button class="bomb-option ${state.bombView === id ? "active" : ""}" type="button" data-bomb-view="${id}" aria-pressed="${state.bombView === id}">${BOMB_ICONS[id]}<span>${view.label}</span></button>`).join("")}</div>`;
+    const view = VIEWS[state.bombView];
+    if (!view) return `<section class="page-shell bomb-page"><div class="section-heading"><h2>Cuerpo de Bomberos de Quito</h2><p>Seleccione una opción para desplegar su lámina interactiva.</p></div>${switcher}</section>`;
+    const hotspots = view.hotspots.map((spot, index) => { const [x, y, w, h] = spot.box; return `<button class="bomb-hotspot ${spot.marker ? "marker" : ""}" type="button" data-hotspot="${index}" aria-label="${escapeHTML(spot.info.title)}" style="left:${x / WIDTH * 100}%;top:${y / HEIGHT * 100}%;width:${w / WIDTH * 100}%;height:${h / HEIGHT * 100}%"></button>`; }).join("");
+    return `<section class="page-shell bomb-page">${switcher}
+      <div class="map-toolbar"><div class="map-heading"><h2>${escapeHTML(view.title)}</h2></div>${renderZoomControls(false)}</div>
+      <div class="map-viewport" aria-label="Visor interactivo"><div class="map-content" style="--map-ratio:${WIDTH / HEIGHT}"><img class="map-image" src="${view.path}" alt="${escapeHTML(view.title)}"><div class="marker-layer">${hotspots}</div></div></div>
+      <div class="map-caption"><span>Pase el mouse (o toque) sobre cada elemento para ver su información · Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${view.hotspots.length} elementos</span></div>
+      <div class="bomb-tip" role="tooltip" hidden></div></section>`;
+  }
+
+  function renderBombTip(info) {
+    const rows = info.rows.map(([label, value]) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`).join("");
+    const list = info.list ? `<p class="detail-label bomb-tip-sub">${escapeHTML(info.list.heading)}</p>${info.list.items.map(([label, value]) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`).join("")}` : "";
+    return `<h3 class="detail-name">${escapeHTML(info.title)}</h3>${rows}${list}${info.note ? `<p class="detail-meta bomb-tip-note">${escapeHTML(info.note)}</p>` : ""}`;
+  }
+
+  function bindBomberos() {
+    MAIN.querySelectorAll("[data-bomb-view]").forEach(button => button.addEventListener("click", () => {
+      state.bombView = button.dataset.bombView;
+      render();
+    }));
+    if (!BOMB.VIEWS[state.bombView]) return;
+    bindPanZoom();
+    const tip = MAIN.querySelector(".bomb-tip");
+    const spots = BOMB.VIEWS[state.bombView].hotspots;
+    const place = (clientX, clientY) => {
+      const gap = 16;
+      const { width, height } = tip.getBoundingClientRect();
+      const left = clientX + gap + width > window.innerWidth ? clientX - gap - width : clientX + gap;
+      const top = Math.min(Math.max(8, clientY - height / 2), window.innerHeight - height - 8);
+      tip.style.left = `${Math.max(8, left)}px`;
+      tip.style.top = `${top}px`;
+    };
+    const show = (button, clientX, clientY) => {
+      MAIN.querySelectorAll(".bomb-hotspot.active").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      tip.innerHTML = renderBombTip(spots[Number(button.dataset.hotspot)].info);
+      tip.hidden = false;
+      place(clientX, clientY);
+    };
+    const hide = () => { tip.hidden = true; MAIN.querySelectorAll(".bomb-hotspot.active").forEach(item => item.classList.remove("active")); };
+    MAIN.querySelectorAll(".bomb-hotspot").forEach(button => {
+      button.addEventListener("mouseenter", event => show(button, event.clientX, event.clientY));
+      button.addEventListener("mousemove", event => place(event.clientX, event.clientY));
+      button.addEventListener("mouseleave", hide);
+      button.addEventListener("focus", () => { const r = button.getBoundingClientRect(); show(button, r.right, r.top + r.height / 2); });
+      button.addEventListener("blur", hide);
+      // En pantallas táctiles no hay hover: el toque muestra la información.
+      button.addEventListener("click", event => show(button, event.clientX, event.clientY));
+    });
+    MAIN.querySelector(".map-viewport").addEventListener("pointerdown", event => { if (!event.target.closest(".bomb-hotspot")) hide(); });
+  }
+
+  function renderMapLegendDetail(id) {
+    const legend = DMGR_LEGENDS.find(item => item.id === id);
+    const meta = (label, value) => `<p class="detail-meta"><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</p>`;
+    let body = "";
+    if (legend.related === "Zonas de inundaciones") {
+      body = meta("Barrios", "9") + meta("Familias afectadas", "324") + meta("Personas afectadas", "1.296") + sheetRows("DMGR", "Inundaciones por AZ").rows.filter(row => row[0] !== "TOTAL").map(row => meta(`AZ ${row[0]}`, `${row[1]} barrios · ${row[2]} familias · ${row[3]} personas`)).join("");
+    } else if (legend.related === "Movimientos en masa") {
+      const rows = sheetRows("DMGR", "Movimientos en masa").rows;
+      const count = text => rows.filter(row => row[3] === text).length;
+      body = meta("Sectores", String(rows.length)) + meta("Con personas atrapadas", String(count("Atrapados"))) + meta("Con caos vehicular", String(count("Caos vehicular"))) + `<p class="detail-meta">La Gasca figura en el listado pero no tiene marcador en el mapa.</p>`;
+    } else if (legend.action) {
+      const rows = sheetRows("DMGR", "Acciones principales").rows.filter(row => row[0] === legend.action);
+      body = `<p class="detail-meta"><strong>${escapeHTML(rows[0][1])}</strong></p><ul class="detail-list">${rows.map(row => `<li>${escapeHTML(row[2])}</li>`).join("")}</ul>`;
+    } else if (legend.id === "recursos") {
+      body = meta("Personal servidores (gráfica)", "684") + meta("Recursos totales (gráfica)", "354") + meta("Suma de la tabla", "700 personal · 359 recursos") + `<p class="detail-meta">Los totales de la gráfica no coinciden con la suma de la tabla. IDE (FF.AA.) aparece con «-» en personal.</p>`;
+    } else {
+      body = meta("Categoría", "Simbología del mapa") + meta("Escala", "0 – 5 – 10 – 15 km") + meta("Orientación", "Norte hacia arriba");
+    }
+    return `<h3 class="detail-name">${escapeHTML(legend.label)}</h3>${body}<p class="detail-meta detail-hint">Información ampliada en la pestaña «${escapeHTML(legend.tab)}».</p>`;
+  }
+
+  function renderDetail(unit, point) {
+    if (!point && unit === "DMGR" && state.mapLegend) return renderMapLegendDetail(state.mapLegend);
+    if (!point) return `<p class="detail-empty">${unit === "DMGR" ? "Haz clic en la simbología, en los paneles del mapa o en un punto para consultar su información." : "Haz clic en un punto del mapa para consultar su información operativa."}</p>`;
+    if (unit === "DMGR") {
+      if (point.floodRow) {
+        const row = sheetRows("DMGR", "Inundaciones en barrios").rows.find(item => Number(item[0]) === point.floodRow);
+        return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Zona de inundación</p><p class="detail-meta"><strong>Familias:</strong> ${escapeHTML(row[2])}</p><p class="detail-meta"><strong>Personas:</strong> ${escapeHTML(row[3])}</p><p class="detail-meta"><strong>Administración zonal:</strong> ${escapeHTML(row[4])}</p>`;
+      }
+      const rows = sheetRows("DMGR", "Movimientos en masa").rows.filter(item => point.rows.includes(Number(item[0])));
+      return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Movimiento en masa</p>${rows.map(row => `<p class="detail-meta"><strong>N.º ${escapeHTML(row[0])} · ${escapeHTML(row[1])}:</strong> AZ ${escapeHTML(row[2])} · situación: ${escapeHTML(row[3])}</p>`).join("")}`;
+    }
+    if (unit === "PN") {
+      if (point.accommodation) return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> Alojamiento temporal</p><p class="detail-meta"><strong>Personal:</strong> 1H / 1M</p><p class="detail-meta">El mapa no numera los alojamientos.</p>`;
+      if (point.name === "Parque Cuscungo") return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> ${escapeHTML(point.type)}</p><p class="detail-meta">No figura en el listado de sectores con personal.</p>`;
+      const sectorRows = sheetRows("PN", "Sectores asignados").rows.filter(row => point.sectors.includes(row[1]));
+      const componentRow = sheetRows("PN", "Componentes").rows.find(row => row[0] === point.component);
+      const assigned = sectorRows.map(row => `${row[1]} (${row[2]} servidores)`).join("; ") || "Sin sector asignado en la hoja";
+      const staff = componentRow ? `${componentRow[1]} servidores; ${componentRow[2] || "sin equipo detallado"}` : "No consta en componentes";
+      return `<h3 class="detail-name">${escapeHTML(point.name)}</h3><p class="detail-meta"><strong>Categoría:</strong> ${escapeHTML(point.type)}</p><p class="detail-meta"><strong>Servidores del sector:</strong> ${escapeHTML(sectorRows.map(row => row[2]).join(", ") || "No registrados")}</p><p class="detail-meta"><strong>Componente:</strong> ${escapeHTML(point.component)} · ${escapeHTML(staff)}</p><p class="detail-meta"><strong>Sector asignado:</strong> ${escapeHTML(assigned)}</p>`;
+    }
+    const distribution = sheetRows("AMT", "Distribución por punto").rows;
+    const related = distribution.filter(row => point.rows.includes(Number(row[0])));
+    const details = related.map(row => `<p class="detail-meta"><strong>N.º ${escapeHTML(row[0])} · ${escapeHTML(row[1])}:</strong> ${escapeHTML(row[2])} ACTS · ${escapeHTML(row[3])} motos · ${escapeHTML(row[4])} patrulleros</p>`).join("");
+    return `<h3 class="detail-name">${escapeHTML(point.name)}</h3>${details || '<p class="detail-meta">Sin fila de distribución relacionada.</p>'}`;
+  }
+
+  function renderSubtab(unit, tab) {
+    if (unit === "DMGR") {
+      if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("DMGR", "Datos generales")}`;
+      if (tab === "Acciones") return `<h3>Acciones principales</h3>${renderTable("DMGR", "Acciones principales")}`;
+      if (tab === "Inundaciones") return `<h3>Inundaciones en barrios · seleccione una fila</h3>${renderTable("DMGR", "Inundaciones en barrios", { kind: "dmgr-flood" })}<p class="table-note">Totales reportados en la gráfica: 1.296 personas y 324 familias afectadas.</p>`;
+      if (tab === "Por AZ") return `<h3>Resumen por administración zonal</h3>${renderTable("DMGR", "Inundaciones por AZ")}`;
+      if (tab === "Movimientos") return `<h3>Movimientos en masa · seleccione una fila</h3>${renderTable("DMGR", "Movimientos en masa", { kind: "dmgr-mass" })}<p class="table-note">La Gasca no tiene marcador en el mapa.</p>`;
+      if (tab === "Recursos") return `<h3>Recursos e instituciones desplegadas</h3>${renderTable("DMGR", "Recursos e instituciones")}<p class="table-note">Totales reportados en la gráfica: 684 personal servidores y 354 recursos. La suma de la tabla da 700 y 359. IDE (FF.AA.) aparece con «-» en personal y una columna entre SIS y EMASEO no tiene sigla visible.</p>`;
+      if (tab === "Puntos") return renderPointList("DMGR");
+      return `<h3>Mapa y simbología</h3>${renderTable("DMGR", "Mapa y simbología")}`;
+    }
+    if (unit === "PN") {
+      if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("PN", "Datos generales")}<h3>Componentes operativos</h3>${renderTable("PN", "Componentes")}`;
+      if (tab === "Personal") return `<h3>Distribución del personal</h3>${renderTable("PN", "Distribución personal")}<h3>Componentes</h3>${renderTable("PN", "Componentes")}`;
+      if (tab === "Sectores") return `<h3>Sectores asignados · seleccione una fila</h3>${renderTable("PN", "Sectores asignados", { kind: "pn-sectors" })}<p class="table-note">Las filas relacionadas se resaltan sobre el mapa.</p>`;
+      if (tab === "Logística") return `<h3>Medios logísticos requeridos</h3>${renderTable("PN", "Medios logísticos")}`;
+      if (tab === "Alojamientos") return `<h3>Alojamientos temporales</h3>${renderTable("PN", "Alojamientos")}<p class="table-note">En el mapa se muestran siete ubicaciones sin numeración individual.</p>`;
+      if (tab === "Turnos") return `<h3>Turnos operativos</h3>${renderTable("PN", "Turnos")}`;
+      if (tab === "Puntos") return renderPointList("PN");
+      return `<h3>Simbología y nota operativa</h3>${renderTable("PN", "Simbología y nota")}`;
+    }
+    if (tab === "Resumen") return `<h3>Datos generales</h3>${renderTable("AMT", "Datos generales")}<h3>Recursos totales</h3>${renderTable("AMT", "Recursos totales")}`;
+    if (tab === "Recursos") return `<h3>Recursos totales</h3>${renderTable("AMT", "Recursos totales")}`;
+    if (tab === "Distribución") return `<h3>Recursos por punto de emergencia · seleccione una fila</h3>${renderTable("AMT", "Distribución por punto", { kind: "amt-distribution" })}<p class="table-note">Las filas de puntos están vinculadas a uno o varios marcadores.</p>`;
+    if (tab === "Actividades") return `<h3>Actividades específicas AMT</h3>${renderTable("AMT", "Actividades AMT")}`;
+    if (tab === "Puntos") return renderPointList("AMT");
+    return `<h3>Simbología del mapa</h3>${renderTable("AMT", "Simbología")}<p class="table-note">Solo están definidos los colores rojo (Inundación), amarillo (Deslizamiento / Colapso) y morado (Control vial). Los marcadores azul, naranja y verde no tienen significado en el mapa.</p>`;
+  }
+
+  function pointSet(unit) { return { PN: PN_POINTS, AMT: AMT_POINTS, DMGR: DMGR_POINTS }[unit]; }
+
+  function renderPointList(unit) {
+    return `<input class="search-input" type="search" placeholder="Buscar punto…" aria-label="Buscar punto" value="${escapeHTML(state.search)}"><div class="point-list">${pointSet(unit).map((point, index) => `<button class="point-list-item" type="button" data-point-index="${index}" data-point-unit="${unit}"><span class="point-dot" style="--point-color:${COLORS[point.color]}"></span><span>${escapeHTML(point.name)}</span></button>`).join("")}</div>`;
+  }
+
+  function colorLabel(point, unit) {
+    if (unit === "PN" || unit === "DMGR") return point.type;
+    return { yellow: "Amarillo", blue: "Azul", purple: "Morado", red: "Rojo", orange: "Naranja", white: "Blanco", green: "Verde" }[point.color];
+  }
+
+  function renderZoomControls(withCircles) {
+    const circles = withCircles ? `<button class="tool-button circles-toggle" type="button" aria-label="Ocultar o mostrar círculos" title="Ocultar o mostrar círculos" aria-pressed="${state.circles}">◎</button>` : "";
+    return `<div class="zoom-controls">${circles}<button class="tool-button" type="button" data-zoom="out" aria-label="Alejar" title="Alejar">−</button><button class="tool-button" type="button" data-zoom="in" aria-label="Acercar" title="Acercar">+</button><button class="tool-button" type="button" data-zoom="fit" aria-label="Ajustar mapa" title="Ajustar mapa">⌗</button></div>`;
+  }
+
+  function renderMap(route) {
+    const map = MAPS[route];
+    const points = pointSet(map.dataKey);
+    const filters = [...new Set(points.map(point => colorLabel(point, map.dataKey)))];
+    if (!state.filters[route]) state.filters[route] = new Set(filters);
+    if (!state.subtab[route]) state.subtab[route] = TABS[route][0];
+    const markers = points.map((point, index) => `<button class="map-marker ${state.selectedPoint === index ? "selected" : ""} ${state.relatedPoints.includes(index) ? "related" : ""}" type="button" data-point-index="${index}" data-point-unit="${map.dataKey}" title="${escapeHTML(point.name)}" aria-label="${escapeHTML(point.name)}" style="left:${point.x / map.width * 100}%;top:${point.y / map.height * 100}%;--marker-color:${COLORS[point.color]}"></button>`).join("");
+    const legends = route === "dmgr" ? DMGR_LEGENDS.map(({ id, label, box: [x, y, w, h] }) => `<button class="map-hotspot ${state.mapLegend === id ? "active" : ""}" type="button" data-map-legend="${id}" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" style="left:${x / map.width * 100}%;top:${y / map.height * 100}%;width:${w / map.width * 100}%;height:${h / map.height * 100}%"></button>`).join("") : "";
+    return `<section class="map-layout" data-map-route="${route}"><div class="map-column"><div class="map-topline"><div class="map-heading"><h2>${map.title}</h2><p>Evento 8 · Distrito Metropolitano de Quito</p></div><span class="map-badge">MAPA OPERATIVO</span></div>
+      <div class="map-toolbar"><div class="filter-list">${filters.map(filter => `<button class="filter-chip" type="button" data-filter="${escapeHTML(filter)}" aria-pressed="${state.filters[route].has(filter)}"><span class="filter-swatch" style="--swatch:${COLORS[points.find(point => colorLabel(point, map.dataKey) === filter).color]}"></span>${escapeHTML(filter)}</button>`).join("")}</div>
+      ${renderZoomControls(true)}</div>
+      <div class="map-viewport" aria-label="Visor interactivo del mapa"><div class="map-content" style="--map-ratio:${map.ratio}"><img class="map-image" src="${map.path}" alt="Mapa operativo ${map.short}"><div class="marker-layer">${legends}${markers}</div></div></div>
+      <div class="map-caption"><span>${route === "dmgr" ? "Clic en la simbología o en los paneles para desplegar información · " : ""}Ctrl + rueda para zoom · arrastre para desplazarse</span><span>${points.length} puntos</span></div></div>
+      <aside class="side-panel"><div class="panel-title-row"><div><h2>${map.short}</h2><p>${map.title}</p></div><span class="unit-flag">EVENTO 8</span></div>
+      <div class="kpi-grid">${KPI[route].map(([value, label]) => `<div class="kpi"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`).join("")}</div>
+      <section class="detail-box" aria-live="polite"><p class="detail-label">${route === "dmgr" ? "Detalle" : "Detalle del punto"}</p>${renderDetail(map.dataKey, state.selectedPoint === null ? null : points[state.selectedPoint])}</section>
+      <nav class="data-tabs" aria-label="Datos de ${map.short}">${TABS[route].map(tab => `<button class="data-tab ${state.subtab[route] === tab ? "active" : ""}" type="button" data-subtab="${escapeHTML(tab)}">${escapeHTML(tab)}</button>`).join("")}</nav>
+      <section class="data-content">${renderSubtab(map.dataKey, state.subtab[route])}</section></aside></section>`;
+  }
+
+  function updateNav(route) {
+    NAV_LINKS.forEach(link => {
+      const active = link.dataset.route === route;
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  function render() {
+    const route = location.hash.slice(1).toLowerCase();
+    state.route = ROUTES.includes(route) ? route : "ide";
+    updateNav(state.route);
+    document.title = `ENOS 2026 IDE "SHYRIS" · ${state.route.toUpperCase()}`;
+    if (state.route === "ide") { MAIN.innerHTML = renderHome(); bindHome(); }
+    else if (MAPS[state.route]) { MAIN.innerHTML = renderMap(state.route); bindMap(state.route); }
+    else { MAIN.innerHTML = renderBomberos(); bindBomberos(); }
+  }
+
+  function refreshMap() { render(); }
+
+  function selectPoint(unit, index) {
+    state.selectedPoint = index;
+    state.relatedPoints = [index];
+    state.mapLegend = null;
+    const route = unit.toLowerCase();
+    if (state.route !== route) location.hash = route;
+    else refreshMap();
+  }
+
+  function markerIndicesForRow(unit, kind, value) {
+    const points = pointSet(unit);
+    if (kind === "pn-sectors") return points.map((point, index) => point.sectors?.includes(value) ? index : -1).filter(index => index >= 0);
+    const rowNumber = Number(value);
+    if (kind === "dmgr-flood") return points.map((point, index) => point.floodRow === rowNumber ? index : -1).filter(index => index >= 0);
+    return points.map((point, index) => point.rows?.includes(rowNumber) ? index : -1).filter(index => index >= 0);
+  }
+
+  function bindMap(route) {
+    const unit = MAPS[route].dataKey;
+    const content = MAIN.querySelector(".map-content");
+    const image = MAIN.querySelector(".map-image");
+    image.addEventListener("error", () => {
+      const message = document.createElement("div");
+      message.className = "map-error";
+      message.textContent = `No se pudo cargar el mapa. Ruta esperada: ${MAPS[route].path}`;
+      content.prepend(message);
+    }, { once: true });
+    MAIN.querySelectorAll(".map-marker").forEach(marker => {
+      const point = pointSet(unit)[Number(marker.dataset.pointIndex)];
+      if (!state.filters[route].has(colorLabel(point, unit))) marker.classList.add("hidden");
+      if (state.relatedPoints.length && !state.relatedPoints.includes(Number(marker.dataset.pointIndex))) marker.classList.add("dimmed");
+      marker.addEventListener("click", () => selectPoint(unit, Number(marker.dataset.pointIndex)));
+    });
+    MAIN.querySelectorAll(".filter-chip").forEach(button => button.addEventListener("click", () => {
+      const filter = button.dataset.filter;
+      if (state.filters[route].has(filter)) state.filters[route].delete(filter);
+      else state.filters[route].add(filter);
+      refreshMap();
+    }));
+    MAIN.querySelector(".circles-toggle").addEventListener("click", () => {
+      state.circles = !state.circles;
+      MAIN.querySelector(".map-layout").classList.toggle("circles-off", !state.circles);
+      MAIN.querySelector(".circles-toggle").setAttribute("aria-pressed", String(state.circles));
+    });
+    MAIN.querySelectorAll(".data-tab").forEach(button => button.addEventListener("click", () => {
+      state.subtab[route] = button.dataset.subtab;
+      state.search = "";
+      refreshMap();
+    }));
+    MAIN.querySelectorAll("tr[data-row-kind]").forEach(row => row.addEventListener("click", () => {
+      const indices = markerIndicesForRow(unit, row.dataset.rowKind, row.dataset.rowValue);
+      state.mapLegend = null;
+      state.relatedPoints = indices;
+      state.selectedPoint = indices.length === 1 ? indices[0] : null;
+      refreshMap();
+    }));
+    MAIN.querySelectorAll(".point-list-item").forEach(button => button.addEventListener("click", () => selectPoint(unit, Number(button.dataset.pointIndex))));
+    const search = MAIN.querySelector(".search-input");
+    if (search) search.addEventListener("input", () => {
+      state.search = search.value;
+      MAIN.querySelectorAll(".point-list-item").forEach(button => { button.hidden = !button.textContent.toLowerCase().includes(state.search.toLowerCase()); });
+    });
+    MAIN.querySelectorAll(".map-hotspot").forEach(button => button.addEventListener("click", () => {
+      const legend = DMGR_LEGENDS.find(item => item.id === button.dataset.mapLegend);
+      const closing = state.mapLegend === legend.id;
+      state.mapLegend = closing ? null : legend.id;
+      state.selectedPoint = null;
+      state.relatedPoints = !closing && legend.related ? pointSet(unit).map((point, index) => point.type === legend.related ? index : -1).filter(index => index >= 0) : [];
+      if (!closing) state.subtab[route] = legend.tab;
+      refreshMap();
+      if (!closing) MAIN.querySelector(".detail-box").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }));
+    bindPanZoom();
+  }
+
+  function bindPanZoom() {
+    const viewport = MAIN.querySelector(".map-viewport");
+    const content = MAIN.querySelector(".map-content");
+    // Cada render reconstruye el visor; se restaura el zoom y desplazamiento del usuario.
+    applyTransform(content);
+    MAIN.querySelectorAll("[data-zoom]").forEach(button => button.addEventListener("click", () => applyZoom(button.dataset.zoom, content)));
+    // El arrastre solo captura el puntero al moverse, para que los clics en las zonas de la leyenda sigan funcionando.
+    let drag = null;
+    viewport.addEventListener("pointerdown", event => {
+      if (event.target.closest(".map-marker")) return;
+      drag = { x: event.clientX - state.panX, y: event.clientY - state.panY, startX: event.clientX, startY: event.clientY, captured: false };
+    });
+    viewport.addEventListener("pointermove", event => {
+      if (!drag) return;
+      if (!drag.captured) {
+        if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 5) return;
+        drag.captured = true;
+        viewport.setPointerCapture(event.pointerId);
+      }
+      state.panX = event.clientX - drag.x;
+      state.panY = event.clientY - drag.y;
+      applyTransform(content);
+    });
+    const stopDrag = () => { drag = null; };
+    viewport.addEventListener("pointerup", stopDrag);
+    viewport.addEventListener("pointercancel", stopDrag);
+    viewport.addEventListener("wheel", event => {
+      if (!event.ctrlKey) return;
+      event.preventDefault();
+      changeZoom(event.deltaY < 0 ? 0.15 : -0.15, content);
+    }, { passive: false });
+  }
+
+  function applyTransform(content) {
+    content.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+  }
+
+  function changeZoom(amount, content) {
+    state.zoom = Math.max(.65, Math.min(3, state.zoom + amount));
+    applyTransform(content);
+  }
+
+  function applyZoom(action, content) {
+    if (action === "fit") { state.zoom = 1; state.panX = 0; state.panY = 0; applyTransform(content); return; }
+    changeZoom(action === "in" ? .2 : -.2, content);
+  }
+
+  // El botón muestra el modo al que se cambia; la preferencia se recuerda en este navegador.
+  const THEME_BUTTON = document.querySelector(".theme-toggle");
+  function applyTheme(theme) {
+    const light = theme === "light";
+    if (light) document.documentElement.dataset.theme = "light";
+    else delete document.documentElement.dataset.theme;
+    THEME_BUTTON.querySelector("[aria-hidden]").textContent = light ? "☾" : "☀";
+    THEME_BUTTON.querySelector(".theme-toggle-label").textContent = light ? "Modo oscuro" : "Modo claro";
+    THEME_BUTTON.setAttribute("aria-pressed", String(!light));
+    THEME_BUTTON.title = light ? "Cambiar a modo oscuro" : "Cambiar a modo claro";
+    document.querySelector('meta[name="theme-color"]').content = light ? "#ffffff" : "#07142b";
+  }
+  THEME_BUTTON.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    applyTheme(next);
+    try { localStorage.setItem("enos-theme", next); } catch (error) {}
+  });
+  applyTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+
+  window.addEventListener("hashchange", () => { state.selectedPoint = null; state.relatedPoints = []; state.mapLegend = null; render(); });
+  if (!location.hash) history.replaceState(null, "", "#ide");
+  render();
+})();
